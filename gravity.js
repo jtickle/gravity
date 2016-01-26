@@ -27,6 +27,10 @@ if (!GRAVITY) { GRAVITY = {}; }
 GRAVITY.run = function(renderer, simulation) {
   var pt = 0;
   
+  GRAVITY.addStar = function(x, y, dx, dy, m) {
+    simulation.stars.push(new GRAVITY.Star(x, y, dx, dy, m));
+  }
+  
   function animate(ct) {
     var dt, collisions;
     

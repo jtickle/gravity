@@ -55,6 +55,22 @@ Here are the planned features:
   * center position [or mouse click]
   * momentum over all stars [or mouse drag
   
+Known Issues
+------------
+Collision just ain't right.  Too late at night to debug the math.
+
+  
+Adding a Star
+-------------
+The Plan above requires making some GUI features for this thing.  In
+the mean time, to add a star to the simulation, you can hit F12 and use
+the debugging API:
+
+GRAVITY.addStar(X, Y, dX, dY, mass)
+
+Where X and Y are positions, dX and dY are initial momentum, and mass
+is just that.
+  
 Copying
 -------
 
