@@ -54,10 +54,6 @@ Here are the planned features:
   * radius
   * center position [or mouse click]
   * momentum over all stars [or mouse drag
-  
-Known Issues
-------------
-Collision just ain't right.  Too late at night to debug the math.
 
   
 Adding a Star

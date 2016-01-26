@@ -74,8 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
   var simulation = new GRAVITY.simulation(1);
 
   simulation.stars.push(new GRAVITY.Star(   0, 0, 10,   0, 1000));
-  simulation.stars.push(new GRAVITY.Star( 50, 0,  0,  25, 1000));
-  simulation.stars.push(new GRAVITY.Star(-50, 0,  0, -25, 1000));
+  simulation.stars.push(new GRAVITY.Star(  50, 0,  0,  25, 1000));
+  simulation.stars.push(new GRAVITY.Star( -50, 0,  0, -25, 1000));
+  simulation.stars.push(new GRAVITY.Star( 100, 0,  0,  50, 1000));
+  simulation.stars.push(new GRAVITY.Star(-100, 0,  0, -50, 1000));
+  simulation.stars.push(new GRAVITY.Star(  10,20, 10,  65, 100));
   
   document.body.appendChild(renderer.view);
   

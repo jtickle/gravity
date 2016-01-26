@@ -97,7 +97,7 @@ GRAVITY.simulation = function(G0) {
       S1.dy = ((S1.dy * S1.m) + (S2.dy * S2.m)) / m;
       S1.setMass(m);
       
-      stars.splice(m[i+1], 1);
+      stars.splice(cs[i+1], 1);
     }
   }
     
