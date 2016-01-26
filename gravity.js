@@ -28,7 +28,9 @@ GRAVITY.run = function(renderer, simulation) {
   var pt = 0;
   
   GRAVITY.addStar = function(x, y, dx, dy, m) {
-    simulation.stars.push(new GRAVITY.Star(x, y, dx, dy, m));
+    var s = new GRAVITY.Star(x, y, dx, dy, m);
+    simulation.stars.push(s);
+    return s;
   }
   
   function animate(ct) {
