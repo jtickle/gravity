@@ -24,7 +24,9 @@
 
 if (!GRAVITY) { GRAVITY = {}; }
 
-GRAVITY.run = function(renderer, simulation) {
+GRAVITY.run = function() {
+  var renderer = new GRAVITY.renderer(0x000000, 'gravity');
+  var simulation = new GRAVITY.simulation(1);
   var pt = 0;
   
   GRAVITY.addStar = function(x, y, dx, dy, m) {
@@ -32,6 +34,43 @@ GRAVITY.run = function(renderer, simulation) {
     simulation.stars.push(s);
     return s;
   }
+
+  var actionQueue = new GRAVITY.actionQueue(simulation);
+
+  var ui = new GRAVITY.ui('mainmenu', 'submenu', [
+    {
+      id: "select",
+      label: "Select",
+      description: "Stellar selection tools",
+      onActivate: actionQueue.listener('selectActivated'),
+      onDeactivate: actionQueue.listener('selectDeactivated'),
+      sub: [
+        {
+          id: "nearest",
+          label: "Nearest",
+          description: "Select the star nearest to the cursor",
+          onActivate: actionQueue.listener('selectNearestActivated'),
+          onDeactivate: actionQueue.listener('selectNearestDeactivated')
+        }
+      ]
+    },
+    {
+      id: "insert",
+      label: "Insert",
+      description: "Add stars",
+      onActivate: actionQueue.listener('insertActivated'),
+      onDeactivate: actionQueue.listener('insertDeactivated'),
+      sub: [
+        {
+          id: "one",
+          label: "One",
+          description: "Click to insert a star and drag to give it momentum, release to create",
+          onActivate: actionQueue.listener('insertOneActivated'),
+          onDeactivate: actionQueue.listener('insertOneDeactivated')
+        }
+      ]
+    }
+  ]);
   
   function animate(ct) {
     var dt, collisions;
@@ -57,10 +96,7 @@ GRAVITY.run = function(renderer, simulation) {
     simulation.applyGravity(dt);
     
     // Draw stars in new positions
-    renderer.showStars(simulation.stars);
-    
-    // Draw this frame to the screen
-    renderer.commitFrame();
+    renderer.addNewStars(simulation.stars);
     
     // Advance Previous Time
     pt = ct;
@@ -70,19 +106,15 @@ GRAVITY.run = function(renderer, simulation) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var renderer = new GRAVITY.renderer(0x000000);
-  var simulation = new GRAVITY.simulation(1);
+  
+  GRAVITY.run();
 
-  simulation.stars.push(new GRAVITY.Star(   0, 0, 10,   0, 1000));
-  simulation.stars.push(new GRAVITY.Star(  50, 0,  0,  25, 1000));
-  simulation.stars.push(new GRAVITY.Star( -50, 0,  0, -25, 1000));
-  simulation.stars.push(new GRAVITY.Star( 100, 0,  0,  50, 1000));
-  simulation.stars.push(new GRAVITY.Star(-100, 0,  0, -50, 1000));
-  simulation.stars.push(new GRAVITY.Star(  10,20, 10,  65, 100));
-  
-  document.body.appendChild(renderer.view);
-  
-  GRAVITY.run(renderer, simulation);
+  GRAVITY.addStar(   0, 0, 10,   0, 1000);
+  GRAVITY.addStar(  50, 0,  0,  25, 1000);
+  GRAVITY.addStar( -50, 0,  0, -25, 1000);
+  GRAVITY.addStar( 100, 0,  0,  50, 1000);
+  GRAVITY.addStar(-100, 0,  0, -50, 1000);
+  GRAVITY.addStar(  10,20, 10,  65, 100);
 
   /* Features:
      + Simulation Control

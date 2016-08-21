@@ -24,66 +24,57 @@
 "use strict";
 if (typeof window.GRAVITY == 'undefined') { window.GRAVITY = {}; }
 
-GRAVITY.renderer = function(bgColor) {
-  var width, height, scheduleBlank = false;
+GRAVITY.renderer = function(bgColor, canvasId) {
+  var width, height;
+    
+  var view = document.getElementById(canvasId);
+  var ctx = view.getContext('2d');
   
   var resizeSelf = function() {
     width  = document.documentElement.clientWidth;
     height = document.documentElement.clientHeight;
+    view.getContext('2d').canvas.width = width;
+    view.getContext('2d').canvas.height = height;
   }
   resizeSelf();
-    
-  var renderer = PIXI.autoDetectRenderer(width, height,
-                                        {backgroundColor: bgColor});
-  this.view = renderer.view;
-  
-  var stage = new PIXI.Container();
-  
-  var gsim = new PIXI.Graphics();
-  //var ginput = new PIXI.Graphics();
-  
-  stage.addChild(gsim);
-  //stage.addChild(ginput);
-  
+
+  var bgColor = '#000000';
+
+  var _this = this;
+
   // Handle window resize gracefully
   window.addEventListener("resize", function() {
     resizeSelf();
-    renderer.resize(width, height);
-    scheduleBlank = true;
+    _this.blank();
   });
-  
-  var drawStars = function(g, stars, colorized) {
-    var i;
-    
-    for(i = 0; i < stars.length; i++) {
-      if(colorized) {
-        gsim.beginFill(0xFFFF66);  // TODO: Color based on mass
-      } else {
-        gsim.beginFill(bgColor);
-      }
-      
-      gsim.drawCircle(stars[i].x + (width/2), stars[i].y + (height/2), stars[i].r);
-      
-      gsim.endFill();
-    }
+
+  this.blank = function() {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  var drawStar = function(star, r) {
+    if(typeof(r) == 'undefined') r = star.r;
+    ctx.beginPath();
+    ctx.arc((width/2) + star.x, (height/2) + star.y, r, 0, 2*Math.PI);
+    ctx.closePath();
   }
   
   this.removeOldStars = function(stars) {
-    if(scheduleBlank) {
-      // Sometimes (resize event) we have to blank the whole drawing.
-      gsim.beginFill(bgColor);
-      gsim.drawRect(0, 0, width, height);
-      gsim.endFill();
-    } else {
-      drawStars(gsim, stars, false);
+    for(var i = 0; i < stars.length; i++) {
+      drawStar(stars[i], stars[i].r + 1);
+      ctx.fillStyle = '#000000';
+      ctx.fill();
     }
   }
-  
-  this.showStars = function(stars) {
-    drawStars(gsim, stars, true);
+
+  this.addNewStars = function(stars) {
+    for(var i = 0; i < stars.length; i++) {
+      drawStar(stars[i])
+      ctx.fillStyle = '#FFFF66';
+      ctx.fill();
+    }
   }
-  
-  this.commitFrame = function() {
-    renderer.render(stage);
-  }
+
+  this.blank();
 }

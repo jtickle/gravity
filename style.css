@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+p.copyleft {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  margin: 0.5em;
+}
+
+p.copyleft, p.copyleft a {
+  font-family: sans-serif;
+  font-size: 8pt;
+  color: #669;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#mainmenu {
+  top: 0;
+}
+
+#submenu {
+  top: 3em;
+}
+
+.menu {
+  left: 0;
+  position: absolute;
+  height: 3em;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  border-bottom: 1px solid #00FF00;
+  z-index: 999;
+}
+
+#sidemenu {
+  top: 6em;
+  left: 0;
+  height: 100%;
+  border-right: 1px solid #00FF00;
+  z-index: 999;
+}
+
+.sidebar {
+  position: absolute;
+  width: 200px;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.menu ul {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.menu li {
+  line-height: 3em;
+  display: block;
+  float: left;
+}
+
+.menu li a {
+  margin: 0;
+  padding: 1em;
+  color: #00FF00;
+  text-decoration: none;
+  font-family: sans-serif;
+  font-size: 1em;
+}
+
+.menu li a:hover {
+  background: rgba(0, 128, 0, 0.5);
+}
+
+.menu li a.active {
+  background: rgba(0, 255, 0, 1);
+  color: #000000;
+}
+

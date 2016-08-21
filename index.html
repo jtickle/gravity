@@ -2,41 +2,32 @@
 <html>
   <head>
     <title>Gravity</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-      
-      p.copyleft {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        z-index: 999;
-        margin: 0.5em;
-      }
-      
-      p.copyleft, p.copyleft a {
-        font-family: sans-serif;
-        font-size: 8pt;
-        color: #669;
-      }
-      
-      canvas {
-        position: absolute;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
+    <canvas id="gravity"></canvas>
+    <div id="mainmenu" class="menu">
+      <ul>
+        <li><a id="ctl-select" class="active" href="#">Select</a></li>
+        <li><a id="ctl-insert" href="#">Insert</a></li>
+      </ul>
+    </div>
+    <div id="submenu" class="menu">
+      <ul>
+        <li><a id="ctl-select-nearest" class="active" href="#">Nearest</a></li>
+      </ul>
+    </div>
+    <div id="sidemenu" class="sidebar">
+    </div>
     <p class="copyleft">
       <strong>Gravity</strong> &copy; 2016 Jeffrey W. Tickle
-      [<a href="http://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a>]
-      [<a href="https://github.com/jtickle/gravity">Source</a>]
+      [<a href="http://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a>]
+      [<a href="https://github.com/jtickle/gravity" target="_blank">Source</a>]
     </p>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.9/pixi.js"></script>
     <script type="text/javascript" src="renderer.js"></script>
     <script type="text/javascript" src="simulation.js"></script>
+    <script type="text/javascript" src="actionQueue.js"></script>
+    <script type="text/javascript" src="ui.js"></script>
     <script type="text/javascript" src="gravity.js"></script>
   </body>
 </html>
