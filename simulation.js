@@ -40,7 +40,7 @@ GRAVITY.Star.prototype = {
 
 GRAVITY.simulation = function(G0) {
   this.G = G0;
-  
+
   var calcGravityAndCollide = function(G, S1, S2) {
     var xd, yd, r2, r,
         f,  th, fx, fy;

@@ -51,6 +51,8 @@ GRAVITY.uic.menu = function(main, sub, id, actions) {
         if(activeSub) activeSub.deactivate();
         activeSub = new GRAVITY.uic.menu(sub, null, id + '-' + action.id, action.sub);
       }
+
+      activeAction.onActivate();
     }
   }
 

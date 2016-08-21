@@ -37,5 +37,17 @@ GRAVITY.actionQueue = function(simulation) {
       console.log(actionQueue);
     }
   }
+
+  this.flushQueue = function(target) {
+    while(actionQueue.length > 0) {
+      var next = actionQueue.shift();
+      var method = next.shift();
+      if(typeof(target[method]) == 'undefined') {
+        throw "Requested handler is undefined: " + next;
+      }
+
+      target[method].apply(next);
+    }
+  }
 }
 

@@ -29,6 +29,8 @@ GRAVITY.renderer = function(bgColor, canvasId) {
     
   var view = document.getElementById(canvasId);
   var ctx = view.getContext('2d');
+  this.view = view;
+  this.ctx = ctx;
   
   var resizeSelf = function() {
     width  = document.documentElement.clientWidth;
@@ -53,10 +55,29 @@ GRAVITY.renderer = function(bgColor, canvasId) {
     ctx.fillRect(0, 0, width, height);
   }
 
+  var screenToX = function(screenX) {
+    return screenX - (width / 2);
+  }
+  var screenToY = function(screenY) {
+    return screenY - (height / 2);
+  }
+
+  var XToScreen = function(worldX) {
+    return (width / 2) + worldX;
+  }
+  var YToScreen = function(worldY) {
+    return (height / 2) + worldY;
+  }
+
+  this.screenToX = screenToX;
+  this.screenToY = screenToY;
+  this.XToScreen = XToScreen;
+  this.YToScreen = YToScreen;
+
   var drawStar = function(star, r) {
     if(typeof(r) == 'undefined') r = star.r;
     ctx.beginPath();
-    ctx.arc((width/2) + star.x, (height/2) + star.y, r, 0, 2*Math.PI);
+    ctx.arc(XToScreen(star.x), YToScreen(star.y), r, 0, 2*Math.PI);
     ctx.closePath();
   }
   

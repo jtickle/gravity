@@ -28,6 +28,8 @@ GRAVITY.run = function() {
   var renderer = new GRAVITY.renderer(0x000000, 'gravity');
   var simulation = new GRAVITY.simulation(1);
   var pt = 0;
+
+  var tools = new GRAVITY.tools(simulation, renderer);
   
   GRAVITY.addStar = function(x, y, dx, dy, m) {
     var s = new GRAVITY.Star(x, y, dx, dy, m);
@@ -90,13 +92,20 @@ GRAVITY.run = function() {
     // frame here because we would like to keep star-trails around,
     // which cannot be re-calculated due to the chaotic nature of this
     // simulation.
-    renderer.removeOldStars(simulation.stars);
+    //renderer.removeOldStars(simulation.stars);
+    renderer.blank();
     
     // Apply Gravity (note: this will remove stars that have collided)
     simulation.applyGravity(dt);
     
     // Draw stars in new positions
     renderer.addNewStars(simulation.stars);
+
+    // Deal with UI - process action queue
+    actionQueue.flushQueue(tools);
+
+    // Deal with UI - render tool
+    tools.render(renderer);
     
     // Advance Previous Time
     pt = ct;
