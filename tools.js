@@ -25,8 +25,9 @@
 if (!GRAVITY) { GRAVITY = {}; }
 if (!GRAVITY.toolsreg) { GRAVITY.toolsreg = {}; }
 
-GRAVITY.toolsreg.selectNearest = function(simulation, renderer) {
+GRAVITY.toolsreg.selectNearest = function(simulation, renderer, ui) {
   this.nearest = null;
+  this.selected = null;
   var _this = this;
 
   var onMouseMove = function(e) {
@@ -42,16 +43,27 @@ GRAVITY.toolsreg.selectNearest = function(simulation, renderer) {
     _this.mouseOver = false;
   }
 
+  var onClick = function(e) {
+    if(!_this.nearest) return;
+    _this.selected = _this.nearest;
+  }
+
   this.activate = function() {
     renderer.view.addEventListener("mousemove", onMouseMove);
     renderer.view.addEventListener("mouseenter", onMouseOver);
     renderer.view.addEventListener("mouseleave", onMouseOut);
+    renderer.view.addEventListener("click", onClick);
   }
 
   this.deactivate = function() {
     renderer.view.removeEventListener("mousemove", onMouseMove);
     renderer.view.removeEventListener("mouseenter", onMouseOver);
     renderer.view.removeEventListener("mouseleave", onMouseOut);
+    renderer.view.removeEventListener("click", onClick);
+    var herp = document.getElementById('derp');
+    if(herp) {
+      herp.parentNode.removeChild(herp);
+    }
   }
 
   this.mutate = function() {
@@ -87,10 +99,40 @@ GRAVITY.toolsreg.selectNearest = function(simulation, renderer) {
     ctx.lineTo(x2, y2);
     ctx.closePath();
     ctx.stroke();
+
+    if(this.selected) {
+      if(!this.uictl) {
+        this.uictl = {
+          id:   null,
+          x:    null,
+          y:    null,
+          dx:   null,
+          dy:   null,
+          mass: null
+        };
+
+        ui.side.appendChild(ui.createTable('derp', this.uictl));
+      }
+
+      this.uictl.id.textContent = this.selected.id;
+      this.uictl.x.textContent = this.selected.x;
+      this.uictl.y.textContent = this.selected.y;
+      this.uictl.dx.textContent = this.selected.dx;
+      this.uictl.dy.textContent = this.selected.dy;
+      this.uictl.mass.textContent = this.selected.m;
+
+      var x = renderer.XToScreen(this.selected.x);
+      var y = renderer.YToScreen(this.selected.y);
+
+      ctx.strokeStyle = '#00CC00';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - 10, y - 10, 20, 20);
+      console.log([x,y]);
+    }
   }
 }
 
-GRAVITY.tools = function(simulation, renderer) {
+GRAVITY.tools = function(simulation, renderer, ui) {
   var activeTool;
 
   this.render = function() {
@@ -108,7 +150,7 @@ GRAVITY.tools = function(simulation, renderer) {
   }
 
   this.moveScreenActivated = function () {
-    activeTool = new GRAVITY.toolsreg.moveScreen(simulation, renderer);
+    activeTool = new GRAVITY.toolsreg.moveScreen(simulation, renderer, ui);
     activeTool.activate();
     console.log("moveScreenActivated");
   }
@@ -128,7 +170,7 @@ GRAVITY.tools = function(simulation, renderer) {
   }
 
   this.selectNearestActivated = function() {
-    activeTool = new GRAVITY.toolsreg.selectNearest(simulation, renderer);
+    activeTool = new GRAVITY.toolsreg.selectNearest(simulation, renderer, ui);
     activeTool.activate();
     console.log("selectNearestActivated");
   }
@@ -148,7 +190,7 @@ GRAVITY.tools = function(simulation, renderer) {
   }
 
   this.insertOneActivated = function() {
-    activeTool = new GRAVITY.toolsreg.insertOne(simulation, renderer);
+    activeTool = new GRAVITY.toolsreg.insertOne(simulation, renderer, ui);
     activeTool.activate();
     console.log("insertOneActivated");
   }

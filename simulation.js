@@ -23,7 +23,10 @@
 "use strict";
 if (typeof window.GRAVITY == 'undefined') { window.GRAVITY = {}; }
 
+var starid = 0;
+
 GRAVITY.Star = function(x, y, dx, dy, mass) {
+  this.id = starid++; // Unique ID
   this.x  = x;   // X Component of Position
   this.y  = y;   // Y Component of Position
   this.dx = dx;  // X Component of Momentum

@@ -94,10 +94,35 @@ GRAVITY.uic.menu = function(main, sub, id, actions) {
   this.activate();
 }
 
+GRAVITY.ui = function(mainid, subid, sideid, actions) {
+  this.main = new GRAVITY.uic.menu(document.getElementById(mainid),
+                                   document.getElementById(subid),
+                                   'ctl-',
+                                   actions);
 
-GRAVITY.ui = function(mainid, subid, actions) {
-  var main = new GRAVITY.uic.menu(document.getElementById(mainid),
-                                  document.getElementById(subid),
-                                  'ctl-',
-                                  actions);
+  this.side = document.getElementById(sideid);
+
+  this.clearSide = function() {
+    while(this.side.firstChild) {
+      this.side.removeChild(this.side.firstChild);
+    }
+  }
+
+  this.createTable = function(id, keyval) {
+    var table = document.createElement('table');
+    table.setAttribute('id', id);
+
+    for(var key in keyval) {
+      var tr = document.createElement('tr');
+      var tdKey = document.createElement('td');
+      tdKey.appendChild(document.createTextNode(key));
+      var tdVal = document.createElement('td');
+      keyval[key] = tdVal
+      tr.appendChild(tdKey);
+      tr.appendChild(tdVal);
+      table.appendChild(tr);
+    };
+
+    return table;
+  }
 }

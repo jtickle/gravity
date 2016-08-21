@@ -28,8 +28,6 @@ GRAVITY.run = function() {
   var renderer = new GRAVITY.renderer(0x000000, 'gravity');
   var simulation = new GRAVITY.simulation(1);
   var pt = 0;
-
-  var tools = new GRAVITY.tools(simulation, renderer);
   
   GRAVITY.addStar = function(x, y, dx, dy, m) {
     var s = new GRAVITY.Star(x, y, dx, dy, m);
@@ -39,7 +37,7 @@ GRAVITY.run = function() {
 
   var actionQueue = new GRAVITY.actionQueue(simulation);
 
-  var ui = new GRAVITY.ui('mainmenu', 'submenu', [
+  var ui = new GRAVITY.ui('mainmenu', 'submenu', 'side', [
     {
       id: "select",
       label: "Select",
@@ -73,6 +71,8 @@ GRAVITY.run = function() {
       ]
     }
   ]);
+
+  var tools = new GRAVITY.tools(simulation, renderer, ui);
   
   function animate(ct) {
     var dt, collisions;
@@ -118,12 +118,28 @@ document.addEventListener('DOMContentLoaded', function() {
   
   GRAVITY.run();
 
+  for(var i = 0; i < 500; i++) {
+    var radius = Math.random() * 750;
+    var theta  = Math.random() * 2 * Math.PI;
+    var magnit = radius / 10;
+    var direc  = theta - 90;
+
+    console.log(Math.log(radius));
+
+    GRAVITY.addStar(radius * Math.cos(theta),
+                    radius * Math.sin(theta),
+                    magnit * Math.cos(direc),
+                    magnit * Math.sin(direc),
+                    Math.random() * 90 + 10);
+  }
+
+  /*
   GRAVITY.addStar(   0, 0, 10,   0, 1000);
   GRAVITY.addStar(  50, 0,  0,  25, 1000);
   GRAVITY.addStar( -50, 0,  0, -25, 1000);
   GRAVITY.addStar( 100, 0,  0,  50, 1000);
   GRAVITY.addStar(-100, 0,  0, -50, 1000);
-  GRAVITY.addStar(  10,20, 10,  65, 100);
+  GRAVITY.addStar(  10,20, 10,  65, 100);*/
 
   /* Features:
      + Simulation Control
