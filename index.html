@@ -6,9 +6,23 @@
   </head>
   <body>
     <canvas id="gravity"></canvas>
-    <div id="mainmenu" class="menu">
-    </div>
-    <div id="submenu" class="menu">
+    <div id="simctl" class="simctl">
+      <div class="simctl-block">
+        <p>
+          <button id="simctl-minus10">&lt;&lt;</button>
+          <button id="simctl-minus1">&lt;</button>
+          <button id="simctl-pause">||</button>
+          <button id="simctl-plus1">&gt;</button>
+          <button id="simctl-plus10">&gt;&gt;</button>
+        </p>
+        <p>
+          <button id="simctl-rev2">-2</button>
+          <button id="simctl-rev1">-1</button>
+          <button id="simctl-revhalf">-0.5</button>
+          <button id="simctl-fwdhalf">+0.5</button>
+          <button id="simctl-fwd1">+1</button>
+          <button id="simctl-fwd2">+2</button>
+        </p>
     </div>
     <div id="side" class="sidebar">
       <div id="select-data">
@@ -26,11 +40,10 @@
       [<a href="http://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a>]
       [<a href="https://github.com/jtickle/gravity" target="_blank">Source</a>]
     </p>
-    <script type="text/javascript" src="renderer.js"></script>
-    <script type="text/javascript" src="simulation.js"></script>
-    <script type="text/javascript" src="actionQueue.js"></script>
-    <script type="text/javascript" src="ui.js"></script>
-    <script type="text/javascript" src="tools.js"></script>
-    <script type="text/javascript" src="gravity.js"></script>
+
+    <script src="https://npmcdn.com/react@15.3.1/dist/react.js"></script>
+    <script src="https://npmcdn.com/react-dom@15.3.1/dist/react-dom.js"></script>
+
+    <script src="main.js"></script>
   </body>
 </html>

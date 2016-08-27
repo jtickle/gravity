@@ -20,11 +20,9 @@
  *
  * @licend
  */
- 
 "use strict";
-if (typeof window.GRAVITY == 'undefined') { window.GRAVITY = {}; }
 
-GRAVITY.renderer = function(bgColor, canvasId) {
+module.exports = function(bgColor, canvasId) {
   var width, height;
     
   var view = document.getElementById(canvasId);
@@ -37,7 +35,7 @@ GRAVITY.renderer = function(bgColor, canvasId) {
     height = document.documentElement.clientHeight;
     view.getContext('2d').canvas.width = width;
     view.getContext('2d').canvas.height = height;
-  }
+  };
   resizeSelf();
 
   var bgColor = '#000000';

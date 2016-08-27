@@ -21,28 +21,15 @@
  * @licend
  */
 "use strict";
-if (typeof window.GRAVITY == 'undefined') { window.GRAVITY = {}; }
+
+var Star = require('sim/star');
 
 var starid = 0;
 
-GRAVITY.Star = function(x, y, dx, dy, mass) {
-  this.id = starid++; // Unique ID
-  this.x  = x;   // X Component of Position
-  this.y  = y;   // Y Component of Position
-  this.dx = dx;  // X Component of Momentum
-  this.dy = dy;  // Y Component of Momentum
-  this.setMass(mass);
-}
-
-GRAVITY.Star.prototype = {
-  setMass: function(mass) {
-    this.m = mass;
-    this.r = Math.log10(mass);
-  }
-}
-
-GRAVITY.simulation = function(G0) {
+module.exports = function(G0) {
   this.G = G0;
+
+  var _this = this;
 
   var calcGravityAndCollide = function(G, S1, S2) {
     var xd, yd, r2, r,
@@ -132,6 +119,12 @@ GRAVITY.simulation = function(G0) {
     }
     
     mergeStars(this.stars, collisions);
+  }
+
+  this.addStar = function(x, y, dx, dy, m) {
+    var s = new Star(x, y, dx, dy, m);
+    _this.stars.push(s);
+    return s;
   }
   
   this.stars = [];

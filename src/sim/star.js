@@ -22,32 +22,18 @@
  */
 "use strict";
 
-if (!GRAVITY) { GRAVITY = {}; }
+var starid = 0;
 
-GRAVITY.actionQueue = function(simulation) {
-  var listeners = {};
-  var actionQueue = [];
-
-  this.listener = function(evt) {
-    return function() {
-      var action = Array.prototype.slice.call(arguments, 0);
-      action.unshift(evt);
-      actionQueue.push(action);
-
-      console.log(actionQueue);
-    }
-  }
-
-  this.flushQueue = function(target) {
-    while(actionQueue.length > 0) {
-      var next = actionQueue.shift();
-      var method = next.shift();
-      if(typeof(target[method]) == 'undefined') {
-        throw "Requested handler is undefined: " + next;
-      }
-
-      target[method].apply(next);
-    }
-  }
+module.exports = function(x, y, dx, dy, mass) {
+  this.id = starid++; // Unique ID
+  this.x  = x;   // X Component of Position
+  this.y  = y;   // Y Component of Position
+  this.dx = dx;  // X Component of Momentum
+  this.dy = dy;  // Y Component of Momentum
+  this.setMass(mass);
 }
 
+module.exports.prototype.setMass = function(mass) {
+  this.m = mass;
+  this.r = Math.log10(mass);
+};

@@ -22,22 +22,28 @@
  */
 "use strict";
 
-if (!GRAVITY) { GRAVITY = {}; }
+var Renderer = require('renderer');
+var Simulation = require('simulation');
+//var actionQueueFac = require('actionQueue.js').fac;
+var uiFac = require('ui.js').fac;
 
-GRAVITY.run = function() {
-  var renderer = new GRAVITY.renderer(0x000000, 'gravity');
-  var simulation = new GRAVITY.simulation(1);
+var run = function() {
+  var renderer = new Renderer(0x000000, 'gravity');
+  var simulation = new Simulation(1);
+  var ui = new uiFac('side');
   var pt = 0;
+
+  window.GRAVITY = {};
   
   GRAVITY.addStar = function(x, y, dx, dy, m) {
-    var s = new GRAVITY.Star(x, y, dx, dy, m);
-    simulation.stars.push(s);
-    return s;
+    simulation.addStar(x, y, dx, dy, m);
   }
 
-  var actionQueue = new GRAVITY.actionQueue(simulation);
+  //var actionQueue = new GRAVITY.actionQueue(simulation);
 
-  var ui = new GRAVITY.ui('mainmenu', 'submenu', 'side', [
+  //var ui = new GRAVITY.ui('side');
+
+  /*var ui = new GRAVITY.ui('mainmenu', 'submenu', 'side', [
     {
       id: "select",
       label: "Select",
@@ -70,9 +76,9 @@ GRAVITY.run = function() {
         }
       ]
     }
-  ]);
+  ]);*/
 
-  var tools = new GRAVITY.tools(simulation, renderer, ui);
+  //var tools = new GRAVITY.tools(simulation, renderer, ui);
   
   function animate(ct) {
     var dt, collisions;
@@ -102,10 +108,10 @@ GRAVITY.run = function() {
     renderer.addNewStars(simulation.stars);
 
     // Deal with UI - process action queue
-    actionQueue.flushQueue(tools);
+    //actionQueue.flushQueue(tools);
 
     // Deal with UI - render tool
-    tools.render(renderer);
+    //tools.render(renderer);
     
     // Advance Previous Time
     pt = ct;
@@ -116,8 +122,9 @@ GRAVITY.run = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   
-  GRAVITY.run();
+  run();
 
+  // Generate a bunch of random stars
   for(var i = 0; i < 500; i++) {
     var radius = Math.random() * 750;
     var theta  = Math.random() * 2 * Math.PI;
@@ -126,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log(Math.log(radius));
 
-    GRAVITY.addStar(radius * Math.cos(theta),
+    window.GRAVITY.addStar(radius * Math.cos(theta),
                     radius * Math.sin(theta),
                     magnit * Math.cos(direc),
                     magnit * Math.sin(direc),
