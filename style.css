@@ -59,6 +59,12 @@ canvas {
   padding: 0;
 }
 
+#side td {
+  font-size: 0.75em;
+  max-width: 24px;
+  overflow: hidden;
+}
+
 .sidebar {
   position: absolute;
   width: 200px;

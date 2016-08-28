@@ -25,12 +25,16 @@
 var Renderer = require('renderer');
 var Simulation = require('simulation');
 //var actionQueueFac = require('actionQueue.js').fac;
-var uiFac = require('ui.js').fac;
+var UI = require('ui');
+
+var SelectOne = require('mode/SelectOne');
 
 var run = function() {
   var renderer = new Renderer(0x000000, 'gravity');
   var simulation = new Simulation(1);
-  var ui = new uiFac('side');
+  var ui = new UI('side', simulation);
+//  var input = new Input(simulation);
+  var mode = new SelectOne(simulation, renderer);
   var pt = 0;
 
   window.GRAVITY = {};
@@ -106,6 +110,14 @@ var run = function() {
     
     // Draw stars in new positions
     renderer.addNewStars(simulation.stars);
+
+    // Draw Overlay - non-HTMl UI elements
+    renderer.drawOverlay(simulation.selected);
+
+    mode.activate();
+    mode.mutate();
+    mode.render();
+    ui.render();
 
     // Deal with UI - process action queue
     //actionQueue.flushQueue(tools);

@@ -95,5 +95,19 @@ module.exports = function(bgColor, canvasId) {
     }
   }
 
+  this.drawOverlay = function(selected) {
+    // Draw Selection Boxes
+    ctx.strokeStyle = '#00CC00';
+    ctx.lineWidth = 1;
+    for(var i in selected) {
+      var s = selected[i];
+      var x = XToScreen(s.x);
+      var y = YToScreen(s.y);
+
+      ctx.strokeRect(x - 10, y - 10, 20, 20);
+      ctx.closePath();
+    }
+  }
+
   this.blank();
 }

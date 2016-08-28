@@ -43,10 +43,10 @@ module.exports = function(G0) {
     xd = S2.x - S1.x;        // X Component of distance
     yd = S2.y - S1.y;        // Y Component of distance
     r2 = xd*xd + yd*yd;      // Distance squared between stars
-    f  = G / r2;             // Force due to gravity (disregarding mass)
+    f  = G / r2;             // Force due to gravity
     th = Math.atan2(xd, yd); // Angle between line through stars and X-axis
-    fx = f * Math.sin(th);   // X Component of Force (disregarding mass)
-    fy = f * Math.cos(th);   // Y Component of Force (disregarding mass)
+    fx = f * Math.sin(th);   // X Component of Force
+    fy = f * Math.cos(th);   // Y Component of Force
     
     // Apply force components to star momentum components
     // At this point, we multiply in the mass of the other star to get
@@ -81,11 +81,15 @@ module.exports = function(G0) {
     for(i = 0; i < cs.length; i+=2) {
       S1 = stars[cs[i]];
       S2 = stars[cs[i+1]];
-      console.log("Merged", S1, S2);
+      //console.log("Merged", S1, S2);
       m = S1.m + S2.m;
       S1.dx = ((S1.dx * S1.m) + (S2.dx * S2.m)) / m;
       S1.dy = ((S1.dy * S1.m) + (S2.dy * S2.m)) / m;
       S1.setMass(m);
+
+      if(_this.unselect(S2)) {
+        _this.select(S1);
+      }
       
       stars.splice(cs[i+1], 1);
     }
@@ -126,7 +130,38 @@ module.exports = function(G0) {
     _this.stars.push(s);
     return s;
   }
-  
+
+  this.select = function(star) {
+    if(!_this.isSelected(star)) {
+      _this.selected.push(star);
+      return true;
+    }
+    return false;
+  }
+
+  this.unselect = function(star) {
+    var idx = _this.selected.indexOf(star);
+    if(idx == -1) return false;
+    _this.selected.splice(idx, 1);
+    return true;
+  }
+
+  this.isSelected = function(star) {
+    return _this.selected.indexOf(star) > -1;
+  }
+
+  this.toggleSelected = function(star)
+  {
+    if(!this.isSelected(star)) {
+      this.select(star);
+      return true;
+    } else {
+      this.unselect(star);
+      return false;
+    }
+  }
+
   this.stars = [];
+  this.selected = [];
   
 }

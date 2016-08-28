@@ -22,10 +22,16 @@
  */
 "use strict";
 
-module.exports = {
-  fac: function(sideid) {
+var React = require('react');
+var ReactDOM = require('react-dom');
+var StarProps = require('component/StarProps');
+
+module.exports = function(sideid, simulation) {
+  this.render = function() {
     ReactDOM.render(
-      <h1>Hello, world!</h1>,
+      <div>
+        <StarProps selected={simulation.selected}/>
+      </div>,
       document.getElementById(sideid));
-  }
+  };
 }
