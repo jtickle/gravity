@@ -73,6 +73,7 @@ module.exports = function(simulation, renderer) {
     var x = e.touches[0].screenX;
     var y = e.touches[0].screenY;
     renderer.centerX += x - renderer.lastX;
+    renderer.centerY += y - renderer.lastY;
     renderer.updateCursor(x, y);
     e.preventDefault();
   }
