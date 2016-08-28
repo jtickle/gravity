@@ -26,22 +26,45 @@ the browser](https://www.khronos.org/webcl/).  Apparently you can kind
 of do it with shaders in WebGL, but let's get the basic idea going
 first, shall we?
 
+Here are the implemented features:
+
+* Gravity Simulation
+  * Stars have mass, position, momentum
+  * Gravity between stars is applied continuously
+  * Stars collide and merge in an inelastic collision
+* GUI
+  * React components for efficiently displaying continuously-updating
+    data from the system
+  * Graphical overlay on canvas for cursor/touch hinting, and marking
+    selected objects
+  * Display all stars in the system with sizes logarithmic to mass
+* Query
+  * Maintain 'Selected Stars' list within Simulation
+  * Display list of 'Selected Stars' attributes in the Sidebar
+  * Star closest to mouse cursor is always highlighted with line
+    * Green line - click to add to Selected Stars list
+    * Red line - click to remove from Selected Stars list
+
 Here are the planned features:
 
+* View
+  * Move the screen around the simulation
+  * Zoom in and out
+* Query
+  * Better interface for mobile devices
+  * Select Elliptical Region (shift for circle)
+  * Select Rectangular Region (shift for square)
+  * Delete Selection
+  * Set Values In Selection
+  * Apply Functions to Sets of Values
+    * Impart momentum into the whole system or a selection
+    * Adjust all masses by a scalar, observe effect
+    * Whatever can be dreamed up here
 * Simulation Control
   * Forward
   * Pause
   * Reverse
   * Multiple Speeds for each (enter s/s rate?)
-* Query
-  * Show values for closest star to cursor
-  * Click to lock to a star, click again to unlock
-* Select
-  * Elliptical Region (shift for circle)
-  * Rectangular Region (shift for square)
-  * Delete Selection
-  * Set Values In Selection
-  * Adjust Values by a constant
 * Add Single
   * Mass
   * Position [or mouse click]
@@ -53,7 +76,7 @@ Here are the planned features:
   * star density
   * radius
   * center position [or mouse click]
-  * momentum over all stars [or mouse drag
+  * momentum over all stars [or mouse drag]
 
   
 Adding a Star
@@ -70,10 +93,5 @@ is just that.
 Copying
 -------
 
-Gravity is licensed under the GNU GPLv3.  See the COPYING file for more
-information.
-
-Gravity uses Pixi.js which is Copyright (C) 2013-2015 Mathew Groves
-and is licsensed under the MIT License.  This version of Gravity
-retrieves Pixi.js in unminified form from cdnjs.com and the library
-is not included in this code repository.
+Gravity is licensed under the GNU GPL-3.0.  See the COPYING file for
+more information.
