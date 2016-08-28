@@ -23,8 +23,8 @@
 "use strict";
 
 module.exports = function(simulation, renderer) {
-  this.nearest = null;
-  this.active = false;
+  var active = false;
+  var nearest = null;
   var _this = this;
 
   var onMouseMove = function(e) {
@@ -32,37 +32,27 @@ module.exports = function(simulation, renderer) {
     _this.y = e.clientY;
   }
 
-  var onMouseOver = function(e) {
-    _this.mouseOver = true;
-  }
-
-  var onMouseOut = function(e) {
-    _this.mouseOver = false;
-  }
-
   var onClick = function(e) {
-    if(!_this.nearest) return;
-    simulation.toggleSelected(_this.nearest);
+    if(!nearest) return;
+    simulation.toggleSelected(nearest);
   }
 
   this.activate = function() {
-    if(this.active) return;
-
+    if(active) return;
     renderer.view.addEventListener("mousemove", onMouseMove);
-    renderer.view.addEventListener("mouseenter", onMouseOver);
-    renderer.view.addEventListener("mouseleave", onMouseOut);
     renderer.view.addEventListener("click", onClick);
-    this.active = true;
+    active = true;
   }
 
   this.deactivate = function() {
-    if(!this.active) return;
-
+    if(!active) return;
     renderer.view.removeEventListener("mousemove", onMouseMove);
-    renderer.view.removeEventListener("mouseenter", onMouseOver);
-    renderer.view.removeEventListener("mouseleave", onMouseOut);
     renderer.view.removeEventListener("click", onClick);
-    this.active = false;
+    active = false;
+  }
+
+  this.isActive = function() {
+    return active;
   }
 
   this.mutate = function() {
@@ -76,7 +66,7 @@ module.exports = function(simulation, renderer) {
       var distance = Math.sqrt(Math.pow(cur.x - renderer.screenToX(_this.x), 2) +
                                Math.pow(cur.y - renderer.screenToY(_this.y), 2));
       if(distance < minimum) {
-        _this.nearest = cur;
+        nearest = cur;
         minimum = distance;
       }
     });
@@ -85,18 +75,17 @@ module.exports = function(simulation, renderer) {
   this.render = function() {
     var ctx = renderer.ctx;
 
-    // If mouse is not over or nearest has not yet been set, don't draw a line
-    if(!this.mouseOver) return;
-    if(!this.nearest) return;
+    // If nearest has not yet been set, don't draw a line
+    if(!nearest) return;
 
     // Draw line from cursor to nearest star
     var x1 = _this.x;
     var y1 = _this.y;
-    var x2 = renderer.XToScreen(_this.nearest.x);
-    var y2 = renderer.YToScreen(_this.nearest.y);
+    var x2 = renderer.XToScreen(nearest.x);
+    var y2 = renderer.YToScreen(nearest.y);
 
     // Green for 'will be selected'; Red for 'will be unselected'
-    if(simulation.isSelected(_this.nearest)) {
+    if(simulation.isSelected(nearest)) {
       ctx.strokeStyle = '#990000';
     } else {
       ctx.strokeStyle = '#009900';

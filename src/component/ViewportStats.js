@@ -23,17 +23,18 @@
 "use strict";
 
 var React = require('react');
-var ReactDOM = require('react-dom');
-var StarProps = require('component/StarProps');
-var ViewportStats = require('component/ViewportStats');
 
-module.exports = function(sideid, simulation, renderer) {
-  this.render = function() {
-    ReactDOM.render(
+class ViewportStats extends React.Component {
+  render() {
+    var p = this.props;
+    return (
       <div>
-        <StarProps selected={simulation.selected} />
-        <ViewportStats x={renderer.centerX} y={renderer.centerY} s={0} />
-      </div>,
-      document.getElementById(sideid));
-  };
+        <p>X: {p.x}</p>
+        <p>Y: {p.y}</p>
+        <p>S: {p.s}</p>
+      </div>
+    );
+  }
 }
+
+module.exports = ViewportStats;

@@ -26,64 +26,33 @@ var Renderer = require('renderer');
 var Simulation = require('simulation');
 //var actionQueueFac = require('actionQueue.js').fac;
 var UI = require('ui');
-
-var SelectOne = require('mode/SelectOne');
+var NormalMode = require('mode/normal');
 
 var run = function() {
+
+  // The Renderer
   var renderer = new Renderer(0x000000, 'gravity');
+
+  // The Simulation
   var simulation = new Simulation(1);
-  var ui = new UI('side', simulation);
-//  var input = new Input(simulation);
-  var mode = new SelectOne(simulation, renderer);
+
+  // The UI
+  var ui = new UI('side', simulation, renderer);
+
+  // Previous frame time, updated per-frame by animate function
   var pt = 0;
 
+  // Put simulation in Normal Mode
+  simulation.setMode(new NormalMode(simulation, renderer));
+
+  // Create Public API
   window.GRAVITY = {};
-  
+
+  // Adds a star to the simulation
   GRAVITY.addStar = function(x, y, dx, dy, m) {
     simulation.addStar(x, y, dx, dy, m);
   }
 
-  //var actionQueue = new GRAVITY.actionQueue(simulation);
-
-  //var ui = new GRAVITY.ui('side');
-
-  /*var ui = new GRAVITY.ui('mainmenu', 'submenu', 'side', [
-    {
-      id: "select",
-      label: "Select",
-      description: "Stellar selection tools",
-      onActivate: actionQueue.listener('selectActivated'),
-      onDeactivate: actionQueue.listener('selectDeactivated'),
-      sub: [
-        {
-          id: "nearest",
-          label: "Nearest",
-          description: "Select the star nearest to the cursor",
-          onActivate: actionQueue.listener('selectNearestActivated'),
-          onDeactivate: actionQueue.listener('selectNearestDeactivated')
-        }
-      ]
-    },
-    {
-      id: "insert",
-      label: "Insert",
-      description: "Add stars",
-      onActivate: actionQueue.listener('insertActivated'),
-      onDeactivate: actionQueue.listener('insertDeactivated'),
-      sub: [
-        {
-          id: "one",
-          label: "One",
-          description: "Click to insert a star and drag to give it momentum, release to create",
-          onActivate: actionQueue.listener('insertOneActivated'),
-          onDeactivate: actionQueue.listener('insertOneDeactivated')
-        }
-      ]
-    }
-  ]);*/
-
-  //var tools = new GRAVITY.tools(simulation, renderer, ui);
-  
   function animate(ct) {
     var dt, collisions;
     
@@ -107,6 +76,9 @@ var run = function() {
     
     // Apply Gravity (note: this will remove stars that have collided)
     simulation.applyGravity(dt);
+
+    // Let the Input Mode have a chance to change the state of the system
+    simulation.mode.mutate();
     
     // Draw stars in new positions
     renderer.addNewStars(simulation.stars);
@@ -114,17 +86,12 @@ var run = function() {
     // Draw Overlay - non-HTMl UI elements
     renderer.drawOverlay(simulation.selected);
 
-    mode.activate();
-    mode.mutate();
-    mode.render();
+    // Let the Input Mode draw on top of all that
+    simulation.mode.render();
+
+    // Update the React HTML UI
     ui.render();
 
-    // Deal with UI - process action queue
-    //actionQueue.flushQueue(tools);
-
-    // Deal with UI - render tool
-    //tools.render(renderer);
-    
     // Advance Previous Time
     pt = ct;
   }

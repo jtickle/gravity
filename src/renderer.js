@@ -24,6 +24,9 @@
 
 module.exports = function(bgColor, canvasId) {
   var width, height;
+
+  this.centerX = 0;
+  this.centerY = 0;
     
   var view = document.getElementById(canvasId);
   var ctx = view.getContext('2d');
@@ -54,17 +57,17 @@ module.exports = function(bgColor, canvasId) {
   }
 
   var screenToX = function(screenX) {
-    return screenX - (width / 2);
+    return screenX - _this.centerX - (width / 2);
   }
   var screenToY = function(screenY) {
-    return screenY - (height / 2);
+    return screenY - _this.centerY - (height / 2);
   }
 
   var XToScreen = function(worldX) {
-    return (width / 2) + worldX;
+    return (width / 2) + worldX + _this.centerX;
   }
   var YToScreen = function(worldY) {
-    return (height / 2) + worldY;
+    return (height / 2) + worldY + _this.centerY;
   }
 
   this.screenToX = screenToX;

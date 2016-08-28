@@ -150,8 +150,7 @@ module.exports = function(G0) {
     return _this.selected.indexOf(star) > -1;
   }
 
-  this.toggleSelected = function(star)
-  {
+  this.toggleSelected = function(star) {
     if(!this.isSelected(star)) {
       this.select(star);
       return true;
@@ -161,7 +160,22 @@ module.exports = function(G0) {
     }
   }
 
+  this.setMode = function(mode) {
+    console.log(mode);
+    if(_this.mode) {
+      _this.mode.deactivate();
+    }
+
+    if(mode) {
+      _this.mode = mode;
+      _this.mode.activate();
+    } else {
+      _this.mode = null;
+    }
+  }
+
   this.stars = [];
   this.selected = [];
+  this.mode = null;
   
 }

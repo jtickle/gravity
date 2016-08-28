@@ -33,11 +33,15 @@ Here are the implemented features:
   * Gravity between stars is applied continuously
   * Stars collide and merge in an inelastic collision
 * GUI
-  * React components for efficiently displaying continuously-updating
-    data from the system
-  * Graphical overlay on canvas for cursor/touch hinting, and marking
-    selected objects
-  * Display all stars in the system with sizes logarithmic to mass
+  * HTML DOM
+    * React components for efficiently displaying continuously-updating
+      data from the system
+  * Overlay
+    * Active command cursor/touch hints
+    * Marking selected objects
+  * Simulation Canvas
+    * Display all stars in the system with sizes logarithmic to mass
+    * Right-click-drag to move the screen around the simulation
 * Query
   * Maintain 'Selected Stars' list within Simulation
   * Display list of 'Selected Stars' attributes in the Sidebar
@@ -47,9 +51,17 @@ Here are the implemented features:
 
 Here are the planned features:
 
-* View
-  * Move the screen around the simulation
-  * Zoom in and out
+* Input
+  * Unless a Mode is active...
+    * MouseEnter / MouseMove: SelectOne
+    * MouseLeave: Null
+    * RightDown: MoveCanvasMode
+    * RightUp: (Previous)
+    * ScrollUp: ZoomIn
+    * ScrollDown: ZoomOut
+* GUI
+  * Simulation Canvas
+    * Zoom in and out
 * Query
   * Better interface for mobile devices
   * Select Elliptical Region (shift for circle)

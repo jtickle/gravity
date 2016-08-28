@@ -22,18 +22,28 @@
  */
 "use strict";
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var StarProps = require('component/StarProps');
-var ViewportStats = require('component/ViewportStats');
+module.exports = function(simulation, renderer) {
+  var _this = this;
+  var active = false;
+  var events = {};
 
-module.exports = function(sideid, simulation, renderer) {
-  this.render = function() {
-    ReactDOM.render(
-      <div>
-        <StarProps selected={simulation.selected} />
-        <ViewportStats x={renderer.centerX} y={renderer.centerY} s={0} />
-      </div>,
-      document.getElementById(sideid));
-  };
+  this.addHandler(evt, handler) {
+    events[evt] = handler;
+  }
+
+  this.activate = function() {
+    if(active) return;
+    for(var e in events) {
+      renderer.view.addEventListener(e, events[e]);
+    }
+    active = true;
+  }
+
+  this.deactivate = function() {
+    if(!active) return;
+    for(var e in events) {
+      renderer.view.removeEventListener(e, events[e]);
+    }
+    active = false;
+  }
 }

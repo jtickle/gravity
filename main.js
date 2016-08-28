@@ -8189,63 +8189,32 @@
 	var Simulation = __webpack_require__(300);
 	//var actionQueueFac = require('actionQueue.js').fac;
 	var UI = __webpack_require__(320);
-	
-	var SelectOne = __webpack_require__(563);
+	var NormalMode = __webpack_require__(564);
 	
 	var run = function run() {
+	
+	  // The Renderer
 	  var renderer = new Renderer(0x000000, 'gravity');
+	
+	  // The Simulation
 	  var simulation = new Simulation(1);
-	  var ui = new UI('side', simulation);
-	  //  var input = new Input(simulation);
-	  var mode = new SelectOne(simulation, renderer);
+	
+	  // The UI
+	  var ui = new UI('side', simulation, renderer);
+	
+	  // Previous frame time, updated per-frame by animate function
 	  var pt = 0;
 	
+	  // Put simulation in Normal Mode
+	  simulation.setMode(new NormalMode(simulation, renderer));
+	
+	  // Create Public API
 	  window.GRAVITY = {};
 	
+	  // Adds a star to the simulation
 	  GRAVITY.addStar = function (x, y, dx, dy, m) {
 	    simulation.addStar(x, y, dx, dy, m);
 	  };
-	
-	  //var actionQueue = new GRAVITY.actionQueue(simulation);
-	
-	  //var ui = new GRAVITY.ui('side');
-	
-	  /*var ui = new GRAVITY.ui('mainmenu', 'submenu', 'side', [
-	    {
-	      id: "select",
-	      label: "Select",
-	      description: "Stellar selection tools",
-	      onActivate: actionQueue.listener('selectActivated'),
-	      onDeactivate: actionQueue.listener('selectDeactivated'),
-	      sub: [
-	        {
-	          id: "nearest",
-	          label: "Nearest",
-	          description: "Select the star nearest to the cursor",
-	          onActivate: actionQueue.listener('selectNearestActivated'),
-	          onDeactivate: actionQueue.listener('selectNearestDeactivated')
-	        }
-	      ]
-	    },
-	    {
-	      id: "insert",
-	      label: "Insert",
-	      description: "Add stars",
-	      onActivate: actionQueue.listener('insertActivated'),
-	      onDeactivate: actionQueue.listener('insertDeactivated'),
-	      sub: [
-	        {
-	          id: "one",
-	          label: "One",
-	          description: "Click to insert a star and drag to give it momentum, release to create",
-	          onActivate: actionQueue.listener('insertOneActivated'),
-	          onDeactivate: actionQueue.listener('insertOneDeactivated')
-	        }
-	      ]
-	    }
-	  ]);*/
-	
-	  //var tools = new GRAVITY.tools(simulation, renderer, ui);
 	
 	  function animate(ct) {
 	    var dt, collisions;
@@ -8271,22 +8240,20 @@
 	    // Apply Gravity (note: this will remove stars that have collided)
 	    simulation.applyGravity(dt);
 	
+	    // Let the Input Mode have a chance to change the state of the system
+	    simulation.mode.mutate();
+	
 	    // Draw stars in new positions
 	    renderer.addNewStars(simulation.stars);
 	
 	    // Draw Overlay - non-HTMl UI elements
 	    renderer.drawOverlay(simulation.selected);
 	
-	    mode.activate();
-	    mode.mutate();
-	    mode.render();
+	    // Let the Input Mode draw on top of all that
+	    simulation.mode.render();
+	
+	    // Update the React HTML UI
 	    ui.render();
-	
-	    // Deal with UI - process action queue
-	    //actionQueue.flushQueue(tools);
-	
-	    // Deal with UI - render tool
-	    //tools.render(renderer);
 	
 	    // Advance Previous Time
 	    pt = ct;
@@ -8384,6 +8351,9 @@
 	module.exports = function (bgColor, canvasId) {
 	  var width, height;
 	
+	  this.centerX = 0;
+	  this.centerY = 0;
+	
 	  var view = document.getElementById(canvasId);
 	  var ctx = view.getContext('2d');
 	  this.view = view;
@@ -8413,17 +8383,17 @@
 	  };
 	
 	  var screenToX = function screenToX(screenX) {
-	    return screenX - width / 2;
+	    return screenX - _this.centerX - width / 2;
 	  };
 	  var screenToY = function screenToY(screenY) {
-	    return screenY - height / 2;
+	    return screenY - _this.centerY - height / 2;
 	  };
 	
 	  var XToScreen = function XToScreen(worldX) {
-	    return width / 2 + worldX;
+	    return width / 2 + worldX + _this.centerX;
 	  };
 	  var YToScreen = function YToScreen(worldY) {
-	    return height / 2 + worldY;
+	    return height / 2 + worldY + _this.centerY;
 	  };
 	
 	  this.screenToX = screenToX;
@@ -8636,8 +8606,23 @@
 	    }
 	  };
 	
+	  this.setMode = function (mode) {
+	    console.log(mode);
+	    if (_this.mode) {
+	      _this.mode.deactivate();
+	    }
+	
+	    if (mode) {
+	      _this.mode = mode;
+	      _this.mode.activate();
+	    } else {
+	      _this.mode = null;
+	    }
+	  };
+	
 	  this.stars = [];
 	  this.selected = [];
+	  this.mode = null;
 	};
 
 /***/ },
@@ -8986,13 +8971,15 @@
 	var React = __webpack_require__(321);
 	var ReactDOM = __webpack_require__(353);
 	var StarProps = __webpack_require__(491);
+	var ViewportStats = __webpack_require__(563);
 	
-	module.exports = function (sideid, simulation) {
+	module.exports = function (sideid, simulation, renderer) {
 	  this.render = function () {
 	    ReactDOM.render(React.createElement(
 	      'div',
 	      null,
-	      React.createElement(StarProps, { selected: simulation.selected })
+	      React.createElement(StarProps, { selected: simulation.selected }),
+	      React.createElement(ViewportStats, { x: renderer.centerX, y: renderer.centerY, s: 0 })
 	    ), document.getElementById(sideid));
 	  };
 	};
@@ -30233,116 +30220,115 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var React = __webpack_require__(321);
-	var ReactDOM = __webpack_require__(353);
 	
 	var StarProps = function (_React$Component) {
 	  (0, _inherits3.default)(StarProps, _React$Component);
 	
 	  function StarProps() {
 	    (0, _classCallCheck3.default)(this, StarProps);
-	    return (0, _possibleConstructorReturn3.default)(this, (StarProps.__proto__ || (0, _getPrototypeOf2.default)(StarProps)).call(this));
+	    return (0, _possibleConstructorReturn3.default)(this, (StarProps.__proto__ || (0, _getPrototypeOf2.default)(StarProps)).apply(this, arguments));
 	  }
 	
 	  (0, _createClass3.default)(StarProps, [{
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
 	      var sel = this.props.selected;
 	      if (sel.length == 0) {
 	        return React.createElement(
-	          'div',
-	          { id: 'star-props' },
+	          "div",
+	          { id: "star-props" },
 	          React.createElement(
-	            'p',
+	            "p",
 	            null,
-	            'No star selected.'
+	            "No star selected."
 	          )
 	        );
 	      } else {
 	        return React.createElement(
-	          'table',
-	          { id: 'star-props' },
+	          "table",
+	          { id: "star-props" },
 	          React.createElement(
-	            'thead',
+	            "thead",
 	            null,
 	            React.createElement(
-	              'tr',
+	              "tr",
 	              null,
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'id'
+	                "id"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'x'
+	                "x"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'y'
+	                "y"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'dx'
+	                "dx"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'dy'
+	                "dy"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'm'
+	                "m"
 	              ),
 	              React.createElement(
-	                'td',
+	                "td",
 	                null,
-	                'r'
+	                "r"
 	              )
 	            )
 	          ),
 	          React.createElement(
-	            'tbody',
+	            "tbody",
 	            null,
 	            sel.map(function (star, i) {
 	              return React.createElement(
-	                'tr',
+	                "tr",
 	                { key: star.id },
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.id
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.x
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.y
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.dx
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.dy
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.m
 	                ),
 	                React.createElement(
-	                  'td',
+	                  "td",
 	                  null,
 	                  star.r
 	                )
@@ -31677,15 +31663,188 @@
 	 */
 	"use strict";
 	
-	var _maxSafeInteger = __webpack_require__(564);
+	var _getPrototypeOf = __webpack_require__(492);
+	
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+	
+	var _classCallCheck2 = __webpack_require__(503);
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _createClass2 = __webpack_require__(504);
+	
+	var _createClass3 = _interopRequireDefault(_createClass2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(508);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(555);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var React = __webpack_require__(321);
+	
+	var ViewportStats = function (_React$Component) {
+	  (0, _inherits3.default)(ViewportStats, _React$Component);
+	
+	  function ViewportStats() {
+	    (0, _classCallCheck3.default)(this, ViewportStats);
+	    return (0, _possibleConstructorReturn3.default)(this, (ViewportStats.__proto__ || (0, _getPrototypeOf2.default)(ViewportStats)).apply(this, arguments));
+	  }
+	
+	  (0, _createClass3.default)(ViewportStats, [{
+	    key: "render",
+	    value: function render() {
+	      var p = this.props;
+	      return React.createElement(
+	        "div",
+	        null,
+	        React.createElement(
+	          "p",
+	          null,
+	          "X: ",
+	          p.x
+	        ),
+	        React.createElement(
+	          "p",
+	          null,
+	          "Y: ",
+	          p.y
+	        ),
+	        React.createElement(
+	          "p",
+	          null,
+	          "S: ",
+	          p.s
+	        )
+	      );
+	    }
+	  }]);
+	  return ViewportStats;
+	}(React.Component);
+	
+	module.exports = ViewportStats;
+
+/***/ },
+/* 564 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	var SelectOne = __webpack_require__(565);
+	var MoveZoom = __webpack_require__(569);
+	
+	module.exports = function (simulation, renderer) {
+	  var _this = this;
+	  var active = false;
+	  var selectOne = new SelectOne(simulation, renderer);
+	  var moveZoom = new MoveZoom(simulation, renderer);
+	
+	  var onMouseOver = function onMouseOver(e) {
+	    selectOne.activate();
+	    moveZoom.activate();
+	  };
+	
+	  var onMouseOut = function onMouseOut(e) {
+	    selectOne.deactivate();
+	    moveZoom.deactivate();
+	  };
+	
+	  this.activate = function () {
+	    if (active) return;
+	
+	    renderer.view.addEventListener("mousemove", onMouseOver);
+	    renderer.view.addEventListener("mouseenter", onMouseOver);
+	    renderer.view.addEventListener("mouseleave", onMouseOut);
+	    active = true;
+	  };
+	
+	  this.deactivate = function () {
+	    if (!active) return;
+	
+	    renderer.view.removeEventListener("mousemove", onMouseOver);
+	    renderer.view.removeEventListener("mouseenter", onMouseOver);
+	    renderer.view.removeEventListener("mouseleave", onMouseOut);
+	    active = false;
+	  };
+	
+	  this.isActive = function () {
+	    return active;
+	  };
+	
+	  this.mutate = function () {
+	    if (selectOne.isActive()) selectOne.mutate();
+	    if (moveZoom.isActive()) moveZoom.mutate();
+	  };
+	
+	  this.render = function () {
+	    if (selectOne.isActive()) selectOne.render();
+	    if (moveZoom.isActive()) moveZoom.render();
+	  };
+	};
+
+/***/ },
+/* 565 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	var _maxSafeInteger = __webpack_require__(566);
 	
 	var _maxSafeInteger2 = _interopRequireDefault(_maxSafeInteger);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	module.exports = function (simulation, renderer) {
-	  this.nearest = null;
-	  this.active = false;
+	  var active = false;
+	  var nearest = null;
 	  var _this = this;
 	
 	  var onMouseMove = function onMouseMove(e) {
@@ -31693,37 +31852,27 @@
 	    _this.y = e.clientY;
 	  };
 	
-	  var onMouseOver = function onMouseOver(e) {
-	    _this.mouseOver = true;
-	  };
-	
-	  var onMouseOut = function onMouseOut(e) {
-	    _this.mouseOver = false;
-	  };
-	
 	  var onClick = function onClick(e) {
-	    if (!_this.nearest) return;
-	    simulation.toggleSelected(_this.nearest);
+	    if (!nearest) return;
+	    simulation.toggleSelected(nearest);
 	  };
 	
 	  this.activate = function () {
-	    if (this.active) return;
-	
+	    if (active) return;
 	    renderer.view.addEventListener("mousemove", onMouseMove);
-	    renderer.view.addEventListener("mouseenter", onMouseOver);
-	    renderer.view.addEventListener("mouseleave", onMouseOut);
 	    renderer.view.addEventListener("click", onClick);
-	    this.active = true;
+	    active = true;
 	  };
 	
 	  this.deactivate = function () {
-	    if (!this.active) return;
-	
+	    if (!active) return;
 	    renderer.view.removeEventListener("mousemove", onMouseMove);
-	    renderer.view.removeEventListener("mouseenter", onMouseOver);
-	    renderer.view.removeEventListener("mouseleave", onMouseOut);
 	    renderer.view.removeEventListener("click", onClick);
-	    this.active = false;
+	    active = false;
+	  };
+	
+	  this.isActive = function () {
+	    return active;
 	  };
 	
 	  this.mutate = function () {
@@ -31736,7 +31885,7 @@
 	    stars.forEach(function (cur, idx, arr) {
 	      var distance = Math.sqrt(Math.pow(cur.x - renderer.screenToX(_this.x), 2) + Math.pow(cur.y - renderer.screenToY(_this.y), 2));
 	      if (distance < minimum) {
-	        _this.nearest = cur;
+	        nearest = cur;
 	        minimum = distance;
 	      }
 	    });
@@ -31745,18 +31894,17 @@
 	  this.render = function () {
 	    var ctx = renderer.ctx;
 	
-	    // If mouse is not over or nearest has not yet been set, don't draw a line
-	    if (!this.mouseOver) return;
-	    if (!this.nearest) return;
+	    // If nearest has not yet been set, don't draw a line
+	    if (!nearest) return;
 	
 	    // Draw line from cursor to nearest star
 	    var x1 = _this.x;
 	    var y1 = _this.y;
-	    var x2 = renderer.XToScreen(_this.nearest.x);
-	    var y2 = renderer.YToScreen(_this.nearest.y);
+	    var x2 = renderer.XToScreen(nearest.x);
+	    var y2 = renderer.YToScreen(nearest.y);
 	
 	    // Green for 'will be selected'; Red for 'will be unselected'
-	    if (simulation.isSelected(_this.nearest)) {
+	    if (simulation.isSelected(nearest)) {
 	      ctx.strokeStyle = '#990000';
 	    } else {
 	      ctx.strokeStyle = '#009900';
@@ -31771,26 +31919,102 @@
 	};
 
 /***/ },
-/* 564 */
+/* 566 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(565), __esModule: true };
+	module.exports = { "default": __webpack_require__(567), __esModule: true };
 
 /***/ },
-/* 565 */
+/* 567 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(566);
+	__webpack_require__(568);
 	module.exports = 0x1fffffffffffff;
 
 /***/ },
-/* 566 */
+/* 568 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.6 Number.MAX_SAFE_INTEGER
 	var $export = __webpack_require__(305);
 	
 	$export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
+
+/***/ },
+/* 569 */
+/***/ function(module, exports) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	module.exports = function (simulation, renderer) {
+	  var active = false;
+	  var moving = false;
+	  var _this = this;
+	
+	  var onMouseDown = function onMouseDown(e) {
+	    if (e.button == 2) {
+	      moving = true;
+	    }
+	  };
+	
+	  var onMouseUp = function onMouseUp(e) {
+	    if (e.button == 2) {
+	      moving = false;
+	    }
+	  };
+	
+	  var onMouseMove = function onMouseMove(e) {
+	    if (!moving) return;
+	    renderer.centerX += e.movementX;
+	    renderer.centerY += e.movementY;
+	  };
+	
+	  this.activate = function () {
+	    if (active) return;
+	    renderer.view.addEventListener("mousedown", onMouseDown);
+	    renderer.view.addEventListener("mousemove", onMouseMove);
+	    renderer.view.addEventListener("mouseup", onMouseUp);
+	    active = true;
+	  };
+	
+	  this.deactivate = function () {
+	    if (!active) return;
+	    renderer.view.removeEventListener("mousedown", onMouseDown);
+	    renderer.view.removeEventListener("mousemove", onMouseMove);
+	    renderer.view.removeEventListener("mouseup", onMouseUp);
+	    active = false;
+	  };
+	
+	  this.isActive = function () {
+	    return active;
+	  };
+	
+	  this.mutate = function () {};
+	
+	  this.render = function () {};
+	};
 
 /***/ }
 /******/ ]);
