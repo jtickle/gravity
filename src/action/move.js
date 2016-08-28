@@ -72,7 +72,7 @@ module.exports = function(simulation, renderer) {
   var onTouchMove = function(e) {
     if(!touchMoving) return;
     log('onTouchMove', e);
-    renderer.pan(e.deltaX, e.deltaY);
+    renderer.pan(e.touches[0].screenX - renderer.lastX, e.touches[0].screenY - renderer.lastY);
     renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
   }
 
