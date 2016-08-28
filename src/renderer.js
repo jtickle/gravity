@@ -164,5 +164,10 @@ module.exports = function(bgColor, canvasId) {
     _this.centerY = y - (dy * scale);
   }
 
+  this.pan = function(dx, dy) {
+    _this.centerX -= dx * scale;
+    _this.centerY -= dy * scale;
+  }
+
   this.blank();
 }

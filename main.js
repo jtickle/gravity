@@ -8490,6 +8490,11 @@
 	    _this.centerY = y - dy * scale;
 	  };
 	
+	  this.pan = function (dx, dy) {
+	    _this.centerX -= dx * scale;
+	    _this.centerY -= dy * scale;
+	  };
+	
 	  this.blank();
 	};
 
@@ -32175,8 +32180,7 @@
 	  var onMouseMove = function onMouseMove(e) {
 	    if (!mouseMoving) return;
 	    log('onMouseMove', e);
-	    renderer.centerX -= e.movementX;
-	    renderer.centerY -= e.movementY;
+	    renderer.pan(e.movementX, e.movementY);
 	  };
 	
 	  var onPress = function onPress(e) {
@@ -32191,8 +32195,9 @@
 	    log('onTouchMove', e);
 	    var x = e.touches[0].screenX;
 	    var y = e.touches[0].screenY;
-	    renderer.centerX += x - renderer.lastX;
-	    renderer.centerY += y - renderer.lastY;
+	    renderer.centerX -= x - renderer.lastX;
+	    renderer.centerY -= y - renderer.lastY;
+	    renderer.pan(x - renderer.lastX, y - renderer.lastY);
 	    renderer.updateCursor(x, y);
 	    e.preventDefault();
 	  };
