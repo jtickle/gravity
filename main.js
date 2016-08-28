@@ -32183,6 +32183,7 @@
 	    log('onPress', e);
 	    touchMoving = true;
 	    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+	    e.preventDefault();
 	  };
 	
 	  var onTouchMove = function onTouchMove(e) {
@@ -32192,12 +32193,14 @@
 	    var y = e.touches[0].screenY;
 	    renderer.centerX += x - renderer.lastX;
 	    renderer.updateCursor(x, y);
+	    e.preventDefault();
 	  };
 	
 	  var onTouchEnd = function onTouchEnd(e) {
 	    log('onTouchEnd', e);
 	    touchMoving = false;
 	    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+	    e.preventDefault();
 	  };
 	
 	  this.activate = function () {
