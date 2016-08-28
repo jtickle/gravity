@@ -36,25 +36,29 @@ module.exports = function(simulation, renderer) {
   var hammer = new Hammer(renderer.view);
 
   var onMouseDown = function(e) {
-    if(e.button == 2) {
-      log('onMouseDown', e);
-      mouseMoving = true;
-      cursor = document.body.style.cursor;
-      document.body.style.cursor = 'move';
-    }
+    if(touchMoving) return;
+    if(e.button != 2) return;
+
+    log('onMouseDown', e);
+    mouseMoving = true;
+    cursor = document.body.style.cursor;
+    document.body.style.cursor = 'move';
   }
 
   var onMouseUp = function(e) {
-    if(e.button == 2) {
-      log('onMouseUp', e);
-      mouseMoving = false;
-      cursor = null;
-      document.body.style.cursor = 'default';
-    }
+    if(touchMoving) return;
+    if(e.button != 2) return;
+
+    log('onMouseUp', e);
+    mouseMoving = false;
+    cursor = null;
+    document.body.style.cursor = 'default';
   }
 
   var onMouseMove = function(e) {
+    if(touchMoving) return;
     if(!mouseMoving) return;
+
     log('onMouseMove', e);
     renderer.pan(e.movementX, e.movementY);
   }
@@ -63,7 +67,6 @@ module.exports = function(simulation, renderer) {
     log('onPress', e);
     touchMoving = true;
     renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
-    e.preventDefault();
   }
 
   var onTouchMove = function(e) {
@@ -71,14 +74,12 @@ module.exports = function(simulation, renderer) {
     log('onTouchMove', e);
     renderer.pan(e.deltaX, e.deltaY);
     renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
-    e.preventDefault();
   }
 
   var onTouchEnd = function(e) {
     log('onTouchEnd', e);
     touchMoving = false;
     renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
-    e.preventDefault();
   }
 
   this.activate = function() {
