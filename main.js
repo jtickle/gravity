@@ -32190,20 +32190,20 @@
 	  var onPress = function onPress(e) {
 	    log('onPress', e);
 	    touchMoving = true;
-	    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
 	  var onTouchMove = function onTouchMove(e) {
 	    if (!touchMoving) return;
 	    log('onTouchMove', e);
-	    renderer.pan(e.touches[0].screenX - renderer.lastX, e.touches[0].screenY - renderer.lastY);
-	    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+	    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
+	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
 	  var onTouchEnd = function onTouchEnd(e) {
 	    log('onTouchEnd', e);
 	    touchMoving = false;
-	    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
 	  this.activate = function () {
