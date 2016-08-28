@@ -34970,6 +34970,8 @@
 	  var active = false;
 	  var _this = this;
 	  var log = new Logger('action/zoom');
+	  var lastscale = 0;
+	  var pinching = false;
 	
 	  var hammer = new Hammer(renderer.view);
 	
@@ -34979,15 +34981,40 @@
 	    renderer.applyScaleFactor(e.deltaY);
 	  };
 	
+	  var onPinchStart = function onPinchStart(e) {
+	    pinching = true;
+	    lastscale = e.scale;
+	  };
+	
+	  var onPinchMove = function onPinchMove(e) {
+	    if (!pinching) return;
+	    renderer.updateCursor(e.center.x, e.center.y);
+	    renderer.applyScaleFactor(e.scale - lastscale);
+	    lastscale = e.scale;
+	  };
+	
+	  var onPinchEnd = function onPinchEnd(e) {
+	    lastscale = 0;
+	    pinching = false;
+	  };
+	
 	  this.activate = function () {
 	    if (active) return;
 	    renderer.view.addEventListener("wheel", onWheel);
+	    hammer.on("pinchstart", onPinchStart);
+	    hammer.on("pinchmove", onPinchMove);
+	    hammer.on("pinchend", onPinchEnd);
+	    hammer.on("pinchcancel", onPinchEnd);
 	    active = true;
 	  };
 	
 	  this.deactivate = function () {
 	    if (!active) return;
 	    renderer.view.removeEventListener("wheel", onWheel);
+	    hammer.off("pinchstart", onPinchStart);
+	    hammer.off("pinchmove", onPinchMove);
+	    hammer.off("pinchend", onPinchEnd);
+	    hammer.off("pinchcancel", onPinchEnd);
 	    active = false;
 	  };
 	
