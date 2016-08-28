@@ -22,15 +22,23 @@
  */
 "use strict";
 
+var Hammer = require('hammerjs');
+var Logger = require('logger');
+
 module.exports = function(simulation, renderer) {
   var active = false;
-  var moving = false;
+  var mouseMoving = false;
+  var touchMoving = false;
   var cursor = null;
   var _this = this;
+  var log = new Logger('action/move');
+
+  var hammer = new Hammer(renderer.view);
 
   var onMouseDown = function(e) {
     if(e.button == 2) {
-      moving = true;
+      log('onMouseDown', e);
+      mouseMoving = true;
       cursor = document.body.style.cursor;
       document.body.style.cursor = 'move';
     }
@@ -38,16 +46,39 @@ module.exports = function(simulation, renderer) {
 
   var onMouseUp = function(e) {
     if(e.button == 2) {
-      moving = false;
+      log('onMouseUp', e);
+      mouseMoving = false;
       cursor = null;
       document.body.style.cursor = 'default';
     }
   }
 
   var onMouseMove = function(e) {
-    if(!moving) return;
-    renderer.centerX += e.movementX;
-    renderer.centerY += e.movementY;
+    if(!mouseMoving) return;
+    log('onMouseMove', e);
+    renderer.centerX -= e.movementX;
+    renderer.centerY -= e.movementY;
+  }
+
+  var onPress = function(e) {
+    log('onPress', e);
+    touchMoving = true;
+    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
+  }
+
+  var onTouchMove = function(e) {
+    if(!touchMoving) return;
+    log('onTouchMove', e);
+    var x = e.touches[0].screenX;
+    var y = e.touches[0].screenY;
+    renderer.centerX += x - renderer.lastX;
+    renderer.updateCursor(x, y);
+  }
+
+  var onTouchEnd = function(e) {
+    log('onTouchEnd', e);
+    touchMoving = false;
+    renderer.updateCursor(e.touches[0].screenX, e.touches[0].screenY);
   }
 
   this.activate = function() {
@@ -55,6 +86,10 @@ module.exports = function(simulation, renderer) {
     renderer.view.addEventListener("mousedown", onMouseDown);
     renderer.view.addEventListener("mousemove", onMouseMove);
     renderer.view.addEventListener("mouseup", onMouseUp);
+    hammer.on('press', onPress);
+    renderer.view.addEventListener("touchmove", onTouchMove);
+    renderer.view.addEventListener("touchend", onTouchEnd);
+    renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
 
@@ -63,6 +98,10 @@ module.exports = function(simulation, renderer) {
     renderer.view.removeEventListener("mousedown", onMouseDown);
     renderer.view.removeEventListener("mousemove", onMouseMove);
     renderer.view.removeEventListener("mouseup", onMouseUp);
+    hammer.off('press', onPress);
+    renderer.view.removeEventListener("touchmove", onTouchMove);
+    renderer.view.removeEventListener("touchend", onTouchEnd);
+    renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
 

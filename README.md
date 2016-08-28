@@ -30,6 +30,8 @@ Here are the implemented features:
 
 * Gravity Simulation
   * Stars have mass, position, momentum
+    * Stars get a radius, calculated on mass change, for drawing the
+      pretty circle on the screen
   * Gravity between stars is applied continuously
   * Stars collide and merge in an inelastic collision
 * GUI
@@ -41,7 +43,10 @@ Here are the implemented features:
     * Marking selected objects
   * Simulation Canvas
     * Display all stars in the system with sizes logarithmic to mass
-    * Right-click-drag to move the screen around the simulation
+    * Move the screen around the simulation by holding rightmouse and
+      dragging, shift+dragging, or touch-hold-dragging.
+      Zoom in and out by scrolling the mouse wheel, or two-finger
+      touch dragging.
 * Query
   * Maintain 'Selected Stars' list within Simulation
   * Display list of 'Selected Stars' attributes in the Sidebar
@@ -51,14 +56,6 @@ Here are the implemented features:
 
 Here are the planned features:
 
-* Input
-  * Unless a Mode is active...
-    * MouseEnter / MouseMove: SelectOne
-    * MouseLeave: Null
-    * RightDown: MoveCanvasMode
-    * RightUp: (Previous)
-    * ScrollUp: ZoomIn
-    * ScrollDown: ZoomOut
 * GUI
   * Simulation Canvas
     * Zoom in and out

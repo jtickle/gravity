@@ -73,10 +73,6 @@ module.exports = function(bgColor, canvasId) {
     scale = Math.pow(Math.E, scaleBase);
   }
 
-  var addScaleBase = function(ds) {
-    setScaleBase(scaleBase + ds);
-  }
-
   var getScaleBase = function() {
     return scaleBase;
   }
@@ -85,7 +81,6 @@ module.exports = function(bgColor, canvasId) {
     return scale;
   }
 
-  this.addScaleBase = addScaleBase;
   this.setScaleBase = setScaleBase;
   this.getScaleBase = getScaleBase;
   this.getScale = getScale;
@@ -152,6 +147,21 @@ module.exports = function(bgColor, canvasId) {
       ctx.strokeRect(x - 10, y - 10, 20, 20);
       ctx.closePath();
     }
+  }
+
+  this.updateCursor = function(x, y) {
+    _this.lastX = x;
+    _this.lastY = y;
+  }
+
+  this.applyScaleFactor = function(factor) {
+    var x = screenToX(_this.lastX);
+    var y = screenToY(_this.lastY);
+    var dx = (x - _this.centerX) / scale;
+    var dy = (y - _this.centerY) / scale;
+    setScaleBase(scaleBase + (factor / 1000));
+    _this.centerX = x - (dx * scale);
+    _this.centerY = y - (dy * scale);
   }
 
   this.blank();

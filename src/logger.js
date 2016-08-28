@@ -22,41 +22,24 @@
  */
 "use strict";
 
-var Hammer = require('hammerjs');
-var Logger = require('logger');
+var gravity_logsystems = [
+  'action/move',
+  'action/zoom',
+];
 
-module.exports = function(simulation, renderer) {
-  var active = false;
-  var _this = this;
-  var log = new Logger('action/zoom');
+var suppressed = 0;
 
-  var hammer = new Hammer(renderer.view);
-
-  var onWheel = function(e) {
-    log('onWheel', e);
-    renderer.updateCursor(e.clientX, e.clientY);
-    renderer.applyScaleFactor(e.deltaY);
-  }
-
-  this.activate = function() {
-    if(active) return;
-    renderer.view.addEventListener("wheel", onWheel);
-    active = true;
-  }
-
-  this.deactivate = function() {
-    if(!active) return;
-    renderer.view.removeEventListener("wheel", onWheel);
-    active = false;
-  }
-
-  this.isActive = function() {
-    return active;
-  }
-
-  this.mutate = function() {
-  }
-
-  this.render = function() {
+module.exports = function(logsystem) {
+  if(gravity_logsystems.indexOf(logsystem) < 0) {
+    return function(msg) {
+      suppressed++;
+    };
+  } else {
+    return function() {
+      console.log('Logger: Successfully suppressed ' + suppressed + ' messages');
+      suppressed = 0;
+      console.log('Logger: ' + logsystem + ': ');
+      console.log.apply(console, arguments);
+    }
   }
 }
