@@ -23,15 +23,27 @@
 "use strict";
 
 module.exports = function(bgColor, canvasId) {
+  // The width and height of the physical viewport
   var width, height;
 
+  // The position in worldspace at which the center of the canvas points
   this.centerX = 0;
   this.centerY = 0;
+
+  // The base scale setting (Integer from -inf to +inf where 0 = scale of 1:1
+  // and negative gives you a wider perspective)
+  var scaleBase = 0;
+
+  // The computed scale setting Math.pow(Math.E, scaleBase)
+  var scale = 1;
     
   var view = document.getElementById(canvasId);
   var ctx = view.getContext('2d');
   this.view = view;
   this.ctx = ctx;
+
+  this.lastX = 0;
+  this.lastY = 0;
   
   var resizeSelf = function() {
     width  = document.documentElement.clientWidth;
@@ -56,24 +68,54 @@ module.exports = function(bgColor, canvasId) {
     ctx.fillRect(0, 0, width, height);
   }
 
+  var setScaleBase = function(s) {
+    scaleBase = s;
+    scale = Math.pow(Math.E, scaleBase);
+  }
+
+  var addScaleBase = function(ds) {
+    setScaleBase(scaleBase + ds);
+  }
+
+  var getScaleBase = function() {
+    return scaleBase;
+  }
+
+  var getScale = function() {
+    return scale;
+  }
+
+  this.addScaleBase = addScaleBase;
+  this.setScaleBase = setScaleBase;
+  this.getScaleBase = getScaleBase;
+  this.getScale = getScale;
+
   var screenToX = function(screenX) {
-    return screenX - _this.centerX - (width / 2);
+    return ((screenX - (width / 2)) * scale) + _this.centerX;
   }
   var screenToY = function(screenY) {
-    return screenY - _this.centerY - (height / 2);
+    return ((screenY - (height / 2)) * scale) + _this.centerY;
   }
 
   var XToScreen = function(worldX) {
-    return (width / 2) + worldX + _this.centerX;
+    return (width / 2) + ((worldX - _this.centerX) / scale);
   }
   var YToScreen = function(worldY) {
-    return (height / 2) + worldY + _this.centerY;
+    return (height / 2) + ((worldY - _this.centerY) / scale);
   }
 
   this.screenToX = screenToX;
   this.screenToY = screenToY;
   this.XToScreen = XToScreen;
   this.YToScreen = YToScreen;
+
+  this.getWidth = function() {
+    return width;
+  }
+
+  this.getHeight = function() {
+    return height;
+  }
 
   var drawStar = function(star, r) {
     if(typeof(r) == 'undefined') r = star.r;

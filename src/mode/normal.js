@@ -23,22 +23,28 @@
 "use strict";
 
 var SelectOne = require('action/select-one');
-var MoveZoom  = require('action/move-zoom');
+var Move      = require('action/move');
+var Zoom      = require('action/zoom');
 
 module.exports = function(simulation, renderer) {
   var _this     = this;
   var active    = false;
   var selectOne = new SelectOne(simulation, renderer);
-  var moveZoom  = new MoveZoom(simulation, renderer);
+  var move      = new Move(simulation, renderer);
+  var zoom      = new Zoom(simulation, renderer);
 
   var onMouseOver = function(e) {
     selectOne.activate();
-    moveZoom.activate();
+    move.activate();
+    zoom.activate();
+    renderer.lastX = e.clientX;
+    renderer.lastY = e.clientY;
   }
 
   var onMouseOut = function(e) {
     selectOne.deactivate();
-    moveZoom.deactivate();
+    move.deactivate();
+    zoom.deactivate();
   }
 
   this.activate = function() {
@@ -66,14 +72,18 @@ module.exports = function(simulation, renderer) {
   this.mutate = function() {
     if(selectOne.isActive())
       selectOne.mutate();
-    if(moveZoom.isActive())
-      moveZoom.mutate();
+    if(move.isActive())
+      move.mutate();
+    if(zoom.isActive())
+      zoom.mutate();
   }
 
   this.render = function() {
     if(selectOne.isActive())
       selectOne.render();
-    if(moveZoom.isActive())
-      moveZoom.render();
+    if(move.isActive())
+      move.render();
+    if(zoom.isActive())
+      zoom.render();
   }
 }

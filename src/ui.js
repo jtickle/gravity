@@ -29,11 +29,24 @@ var ViewportStats = require('component/ViewportStats');
 
 module.exports = function(sideid, simulation, renderer) {
   this.render = function() {
+    var csx = renderer.lastX;
+    var csy = renderer.lastY;
+    var cwx = renderer.screenToX(csx);
+    var cwy = renderer.screenToY(csy);
+
     ReactDOM.render(
-      <div>
+      (<div>
         <StarProps selected={simulation.selected} />
-        <ViewportStats x={renderer.centerX} y={renderer.centerY} s={0} />
-      </div>,
+        <ViewportStats
+          vx={renderer.centerX}
+          vy={renderer.centerY}
+          vb={renderer.getScaleBase()}
+          vs={renderer.getScale()}
+          cwx={cwx}
+          cwy={cwy}
+          csx={csx}
+          csy={csy} />
+      </div>),
       document.getElementById(sideid));
   };
 }

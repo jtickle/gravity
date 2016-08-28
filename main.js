@@ -8349,15 +8349,27 @@
 	"use strict";
 	
 	module.exports = function (bgColor, canvasId) {
+	  // The width and height of the physical viewport
 	  var width, height;
 	
+	  // The position in worldspace at which the center of the canvas points
 	  this.centerX = 0;
 	  this.centerY = 0;
+	
+	  // The base scale setting (Integer from -inf to +inf where 0 = scale of 1:1
+	  // and negative gives you a wider perspective)
+	  var scaleBase = 0;
+	
+	  // The computed scale setting Math.pow(Math.E, scaleBase)
+	  var scale = 1;
 	
 	  var view = document.getElementById(canvasId);
 	  var ctx = view.getContext('2d');
 	  this.view = view;
 	  this.ctx = ctx;
+	
+	  this.lastX = 0;
+	  this.lastY = 0;
 	
 	  var resizeSelf = function resizeSelf() {
 	    width = document.documentElement.clientWidth;
@@ -8382,24 +8394,54 @@
 	    ctx.fillRect(0, 0, width, height);
 	  };
 	
+	  var setScaleBase = function setScaleBase(s) {
+	    scaleBase = s;
+	    scale = Math.pow(Math.E, scaleBase);
+	  };
+	
+	  var addScaleBase = function addScaleBase(ds) {
+	    setScaleBase(scaleBase + ds);
+	  };
+	
+	  var getScaleBase = function getScaleBase() {
+	    return scaleBase;
+	  };
+	
+	  var getScale = function getScale() {
+	    return scale;
+	  };
+	
+	  this.addScaleBase = addScaleBase;
+	  this.setScaleBase = setScaleBase;
+	  this.getScaleBase = getScaleBase;
+	  this.getScale = getScale;
+	
 	  var screenToX = function screenToX(screenX) {
-	    return screenX - _this.centerX - width / 2;
+	    return (screenX - width / 2) * scale + _this.centerX;
 	  };
 	  var screenToY = function screenToY(screenY) {
-	    return screenY - _this.centerY - height / 2;
+	    return (screenY - height / 2) * scale + _this.centerY;
 	  };
 	
 	  var XToScreen = function XToScreen(worldX) {
-	    return width / 2 + worldX + _this.centerX;
+	    return width / 2 + (worldX - _this.centerX) / scale;
 	  };
 	  var YToScreen = function YToScreen(worldY) {
-	    return height / 2 + worldY + _this.centerY;
+	    return height / 2 + (worldY - _this.centerY) / scale;
 	  };
 	
 	  this.screenToX = screenToX;
 	  this.screenToY = screenToY;
 	  this.XToScreen = XToScreen;
 	  this.YToScreen = YToScreen;
+	
+	  this.getWidth = function () {
+	    return width;
+	  };
+	
+	  this.getHeight = function () {
+	    return height;
+	  };
 	
 	  var drawStar = function drawStar(star, r) {
 	    if (typeof r == 'undefined') r = star.r;
@@ -8975,11 +9017,24 @@
 	
 	module.exports = function (sideid, simulation, renderer) {
 	  this.render = function () {
+	    var csx = renderer.lastX;
+	    var csy = renderer.lastY;
+	    var cwx = renderer.screenToX(csx);
+	    var cwy = renderer.screenToY(csy);
+	
 	    ReactDOM.render(React.createElement(
 	      'div',
 	      null,
 	      React.createElement(StarProps, { selected: simulation.selected }),
-	      React.createElement(ViewportStats, { x: renderer.centerX, y: renderer.centerY, s: 0 })
+	      React.createElement(ViewportStats, {
+	        vx: renderer.centerX,
+	        vy: renderer.centerY,
+	        vb: renderer.getScaleBase(),
+	        vs: renderer.getScale(),
+	        cwx: cwx,
+	        cwy: cwy,
+	        csx: csx,
+	        csy: csy })
 	    ), document.getElementById(sideid));
 	  };
 	};
@@ -31700,25 +31755,125 @@
 	    value: function render() {
 	      var p = this.props;
 	      return React.createElement(
-	        "div",
+	        "table",
 	        null,
 	        React.createElement(
-	          "p",
+	          "thead",
 	          null,
-	          "X: ",
-	          p.x
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              { colSpan: "2" },
+	              "Viewport"
+	            ),
+	            React.createElement(
+	              "td",
+	              { colSpan: "2" },
+	              "Cursor"
+	            )
+	          )
 	        ),
 	        React.createElement(
-	          "p",
+	          "tbody",
 	          null,
-	          "Y: ",
-	          p.y
-	        ),
-	        React.createElement(
-	          "p",
-	          null,
-	          "S: ",
-	          p.s
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "X"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.vx
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              "WX"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.cwx
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "Y"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.vy
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              "WY"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.cwy
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "B"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.vb
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              "SX"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.csx
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "S"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.vs
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              "SY"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              p.csy
+	            )
+	          )
 	        )
 	      );
 	    }
@@ -31757,22 +31912,28 @@
 	"use strict";
 	
 	var SelectOne = __webpack_require__(565);
-	var MoveZoom = __webpack_require__(569);
+	var Move = __webpack_require__(569);
+	var Zoom = __webpack_require__(570);
 	
 	module.exports = function (simulation, renderer) {
 	  var _this = this;
 	  var active = false;
 	  var selectOne = new SelectOne(simulation, renderer);
-	  var moveZoom = new MoveZoom(simulation, renderer);
+	  var move = new Move(simulation, renderer);
+	  var zoom = new Zoom(simulation, renderer);
 	
 	  var onMouseOver = function onMouseOver(e) {
 	    selectOne.activate();
-	    moveZoom.activate();
+	    move.activate();
+	    zoom.activate();
+	    renderer.lastX = e.clientX;
+	    renderer.lastY = e.clientY;
 	  };
 	
 	  var onMouseOut = function onMouseOut(e) {
 	    selectOne.deactivate();
-	    moveZoom.deactivate();
+	    move.deactivate();
+	    zoom.deactivate();
 	  };
 	
 	  this.activate = function () {
@@ -31799,12 +31960,14 @@
 	
 	  this.mutate = function () {
 	    if (selectOne.isActive()) selectOne.mutate();
-	    if (moveZoom.isActive()) moveZoom.mutate();
+	    if (move.isActive()) move.mutate();
+	    if (zoom.isActive()) zoom.mutate();
 	  };
 	
 	  this.render = function () {
 	    if (selectOne.isActive()) selectOne.render();
-	    if (moveZoom.isActive()) moveZoom.render();
+	    if (move.isActive()) move.render();
+	    if (zoom.isActive()) zoom.render();
 	  };
 	};
 
@@ -31971,17 +32134,22 @@
 	module.exports = function (simulation, renderer) {
 	  var active = false;
 	  var moving = false;
+	  var cursor = null;
 	  var _this = this;
 	
 	  var onMouseDown = function onMouseDown(e) {
 	    if (e.button == 2) {
 	      moving = true;
+	      cursor = document.body.style.cursor;
+	      document.body.style.cursor = 'move';
 	    }
 	  };
 	
 	  var onMouseUp = function onMouseUp(e) {
 	    if (e.button == 2) {
 	      moving = false;
+	      cursor = null;
+	      document.body.style.cursor = 'default';
 	    }
 	  };
 	
@@ -32004,6 +32172,74 @@
 	    renderer.view.removeEventListener("mousedown", onMouseDown);
 	    renderer.view.removeEventListener("mousemove", onMouseMove);
 	    renderer.view.removeEventListener("mouseup", onMouseUp);
+	    active = false;
+	  };
+	
+	  this.isActive = function () {
+	    return active;
+	  };
+	
+	  this.mutate = function () {};
+	
+	  this.render = function () {};
+	};
+
+/***/ },
+/* 570 */
+/***/ function(module, exports) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	module.exports = function (simulation, renderer) {
+	  var active = false;
+	  var _this = this;
+	
+	  var onWheel = function onWheel(e) {
+	    var x = renderer.screenToX(e.clientX);
+	    var y = renderer.screenToY(e.clientY);
+	    var dx = (x - renderer.centerX) / renderer.getScale();
+	    var dy = (y - renderer.centerY) / renderer.getScale();
+	    //    var r = Math.sqrt(dx*dx + dy*dy);
+	    //    var theta = Math.atan(dy/dx);
+	    //    console.log([x, y, dx, dy, theta]);
+	    renderer.addScaleBase(e.deltaY / 1000);
+	    renderer.centerX = x - dx * renderer.getScale();
+	    renderer.centerY = y - dy * renderer.getScale();
+	    //    renderer.centerX = x - (r * Math.cos(theta)) / renderer.getScale();
+	    //    renderer.centerY = y - (r * Math.sin(theta)) / renderer.getScale();
+	  };
+	
+	  this.activate = function () {
+	    if (active) return;
+	    renderer.view.addEventListener("wheel", onWheel);
+	    active = true;
+	  };
+	
+	  this.deactivate = function () {
+	    if (!active) return;
+	    renderer.view.removeEventListener("wheel", onWheel);
 	    active = false;
 	  };
 	

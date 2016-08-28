@@ -28,11 +28,40 @@ class ViewportStats extends React.Component {
   render() {
     var p = this.props;
     return (
-      <div>
-        <p>X: {p.x}</p>
-        <p>Y: {p.y}</p>
-        <p>S: {p.s}</p>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <td colSpan="2">Viewport</td>
+            <td colSpan="2">Cursor</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>X</td>
+            <td>{p.vx}</td>
+            <td>WX</td>
+            <td>{p.cwx}</td>
+          </tr>
+          <tr>
+            <td>Y</td>
+            <td>{p.vy}</td>
+            <td>WY</td>
+            <td>{p.cwy}</td>
+          </tr>
+          <tr>
+            <td>B</td>
+            <td>{p.vb}</td>
+            <td>SX</td>
+            <td>{p.csx}</td>
+          </tr>
+          <tr>
+            <td>S</td>
+            <td>{p.vs}</td>
+            <td>SY</td>
+            <td>{p.csy}</td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
 }

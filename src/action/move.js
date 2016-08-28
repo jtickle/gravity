@@ -25,17 +25,22 @@
 module.exports = function(simulation, renderer) {
   var active = false;
   var moving = false;
+  var cursor = null;
   var _this = this;
 
   var onMouseDown = function(e) {
     if(e.button == 2) {
       moving = true;
+      cursor = document.body.style.cursor;
+      document.body.style.cursor = 'move';
     }
   }
 
   var onMouseUp = function(e) {
     if(e.button == 2) {
       moving = false;
+      cursor = null;
+      document.body.style.cursor = 'default';
     }
   }
 
