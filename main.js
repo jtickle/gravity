@@ -35002,8 +35002,9 @@
 	
 	    v.r = Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	
-	    for (var i in (0, _keys2.default)(v)) {
-	      simulation.debug['actionZoom' + i] = v[i];
+	    var k = (0, _keys2.default)(v);
+	    for (var i in k) {
+	      simulation.debug['actionZoom' + k[i]] = v[k[i]];
 	    }
 	
 	    return v;

@@ -68,8 +68,9 @@ module.exports = function(simulation, renderer) {
 
     v.r = Math.sqrt(v.dx*v.dx + v.dy*v.dy);
 
-    for(var i in Object.keys(v)) {
-      simulation.debug['actionZoom'+i] = v[i];
+    var k = Object.keys(v);
+    for(var i in k) {
+      simulation.debug['actionZoom'+k[i]] = v[k[i]];
     }
 
     return v;
