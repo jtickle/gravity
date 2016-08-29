@@ -46,15 +46,16 @@ module.exports = function(simulation, renderer) {
     v.x1 = e.touches[1].clientX;
     v.y0 = e.touches[0].clientY;
     v.y1 = e.touches[1].clientY;
+    var derp;
 
     if(v.x0 > v.x1) {
-      var derp = v.x0;
+      derp = v.x0;
       v.x0 = v.x1;
       v.x1 = derp;
     }
 
     if(v.y0 > v.y1) {
-      var derp = v.y0;
+      derp = v.y0;
       v.y0 = v.y1;
       v.y1 = derp;
     }
@@ -70,6 +71,8 @@ module.exports = function(simulation, renderer) {
     for(var i in Object.keys(v)) {
       simulation.debug['actionZoom'+i] = v[i];
     }
+
+    return v;
   }
 
   var onTouchMove = function(e) {
