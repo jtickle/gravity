@@ -113,7 +113,7 @@ module.exports = function(simulation, renderer) {
     renderer.view.addEventListener("touchstart", onTouchStart);
     renderer.view.addEventListener("touchmove", onTouchMove);
     renderer.view.addEventListener("touchend", onTouchEnd);
-    renderer.view.addEventListener("touchcancel", onTouchCancel);
+    renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
 
@@ -125,7 +125,7 @@ module.exports = function(simulation, renderer) {
     renderer.view.removeEventListener("touchstart", onTouchStart);
     renderer.view.removeEventListener("touchmove", onTouchMove);
     renderer.view.removeEventListener("touchend", onTouchEnd);
-    renderer.view.removeEventListener("touchcancel", onTouchCancel);
+    renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
 
