@@ -35,20 +35,19 @@ module.exports = function(simulation, renderer) {
 
   var onMouseOver = function(e) {
     selectOne.activate();
-    move.activate();
-    zoom.activate();
     renderer.lastX = e.clientX;
     renderer.lastY = e.clientY;
   }
 
   var onMouseOut = function(e) {
     selectOne.deactivate();
-    move.deactivate();
-    zoom.deactivate();
   }
 
   this.activate = function() {
     if(active) return;
+
+    move.activate();
+    zoom.activate();
 
     renderer.view.addEventListener("mousemove", onMouseOver);
     renderer.view.addEventListener("mouseenter", onMouseOver);
@@ -58,6 +57,9 @@ module.exports = function(simulation, renderer) {
 
   this.deactivate = function() {
     if(!active) return;
+
+    move.activate();
+    zoom.activate();
 
     renderer.view.removeEventListener("mousemove", onMouseOver);
     renderer.view.removeEventListener("mouseenter", onMouseOver);

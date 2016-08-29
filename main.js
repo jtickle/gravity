@@ -8189,7 +8189,7 @@
 	var Simulation = __webpack_require__(300);
 	//var actionQueueFac = require('actionQueue.js').fac;
 	var UI = __webpack_require__(320);
-	var NormalMode = __webpack_require__(568);
+	var NormalMode = __webpack_require__(567);
 	
 	var run = function run() {
 	  // The Simulation
@@ -9041,8 +9041,7 @@
 	var React = __webpack_require__(321);
 	var ReactDOM = __webpack_require__(353);
 	var StarProps = __webpack_require__(491);
-	var ViewportStats = __webpack_require__(563);
-	var DebugTable = __webpack_require__(564);
+	var DebugTable = __webpack_require__(563);
 	
 	module.exports = function (sideid, simulation, renderer) {
 	  this.render = function () {
@@ -31739,200 +31738,7 @@
 	 */
 	"use strict";
 	
-	var _getPrototypeOf = __webpack_require__(492);
-	
-	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-	
-	var _classCallCheck2 = __webpack_require__(503);
-	
-	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-	
-	var _createClass2 = __webpack_require__(504);
-	
-	var _createClass3 = _interopRequireDefault(_createClass2);
-	
-	var _possibleConstructorReturn2 = __webpack_require__(508);
-	
-	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-	
-	var _inherits2 = __webpack_require__(555);
-	
-	var _inherits3 = _interopRequireDefault(_inherits2);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var React = __webpack_require__(321);
-	
-	var ViewportStats = function (_React$Component) {
-	  (0, _inherits3.default)(ViewportStats, _React$Component);
-	
-	  function ViewportStats() {
-	    (0, _classCallCheck3.default)(this, ViewportStats);
-	    return (0, _possibleConstructorReturn3.default)(this, (ViewportStats.__proto__ || (0, _getPrototypeOf2.default)(ViewportStats)).apply(this, arguments));
-	  }
-	
-	  (0, _createClass3.default)(ViewportStats, [{
-	    key: "render",
-	    value: function render() {
-	      var p = this.props;
-	      return React.createElement(
-	        "table",
-	        { id: "viewport" },
-	        React.createElement(
-	          "thead",
-	          null,
-	          React.createElement(
-	            "tr",
-	            null,
-	            React.createElement(
-	              "td",
-	              { colSpan: "2" },
-	              "Viewport"
-	            ),
-	            React.createElement(
-	              "td",
-	              { colSpan: "2" },
-	              "Cursor"
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          "tbody",
-	          null,
-	          React.createElement(
-	            "tr",
-	            null,
-	            React.createElement(
-	              "td",
-	              null,
-	              "X"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.vx
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              "WX"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.cwx
-	            )
-	          ),
-	          React.createElement(
-	            "tr",
-	            null,
-	            React.createElement(
-	              "td",
-	              null,
-	              "Y"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.vy
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              "WY"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.cwy
-	            )
-	          ),
-	          React.createElement(
-	            "tr",
-	            null,
-	            React.createElement(
-	              "td",
-	              null,
-	              "B"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.vb
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              "SX"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.csx
-	            )
-	          ),
-	          React.createElement(
-	            "tr",
-	            null,
-	            React.createElement(
-	              "td",
-	              null,
-	              "S"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.vs
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              "SY"
-	            ),
-	            React.createElement(
-	              "td",
-	              null,
-	              p.csy
-	            )
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	  return ViewportStats;
-	}(React.Component);
-	
-	module.exports = ViewportStats;
-
-/***/ },
-/* 564 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @licstart
-	 *
-	 * Copyright (C) 2016  Jeffrey W. Tickle
-	 *
-	 *
-	 * The JavaScript code in this page is free software: you can
-	 * redistribute it and/or modify it under the terms of the GNU
-	 * General Public License (GNU GPL) as published by the Free Software
-	 * Foundation, either version 3 of the License, or (at your option)
-	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
-	 * without even the implied warranty of MERCHANTABILITY or FITNESS
-	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-	 *
-	 * As additional permission under GNU GPL version 3 section 7, you
-	 * may distribute non-source (e.g., minimized or compacted) forms of
-	 * that code without the copy of the GNU GPL normally required by
-	 * section 4, provided you include this license notice and a URL
-	 * through which recipients can access the Corresponding Source.
-	 *
-	 * @licend
-	 */
-	"use strict";
-	
-	var _keys = __webpack_require__(565);
+	var _keys = __webpack_require__(564);
 	
 	var _keys2 = _interopRequireDefault(_keys);
 	
@@ -32025,20 +31831,20 @@
 	module.exports = DebugTable;
 
 /***/ },
+/* 564 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(565), __esModule: true };
+
+/***/ },
 /* 565 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(566), __esModule: true };
-
-/***/ },
-/* 566 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(567);
+	__webpack_require__(566);
 	module.exports = __webpack_require__(307).Object.keys;
 
 /***/ },
-/* 567 */
+/* 566 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.2.14 Object.keys(O)
@@ -32050,6 +31856,96 @@
 	    return $keys(toObject(it));
 	  };
 	});
+
+/***/ },
+/* 567 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	var SelectOne = __webpack_require__(568);
+	var Move = __webpack_require__(572);
+	var Zoom = __webpack_require__(575);
+	
+	module.exports = function (simulation, renderer) {
+	  var _this = this;
+	  var active = false;
+	  var selectOne = new SelectOne(simulation, renderer);
+	  var move = new Move(simulation, renderer);
+	  var zoom = new Zoom(simulation, renderer);
+	
+	  var onMouseOver = function onMouseOver(e) {
+	    selectOne.activate();
+	    renderer.lastX = e.clientX;
+	    renderer.lastY = e.clientY;
+	  };
+	
+	  var onMouseOut = function onMouseOut(e) {
+	    selectOne.deactivate();
+	  };
+	
+	  this.activate = function () {
+	    if (active) return;
+	
+	    move.activate();
+	    zoom.activate();
+	
+	    renderer.view.addEventListener("mousemove", onMouseOver);
+	    renderer.view.addEventListener("mouseenter", onMouseOver);
+	    renderer.view.addEventListener("mouseleave", onMouseOut);
+	    active = true;
+	  };
+	
+	  this.deactivate = function () {
+	    if (!active) return;
+	
+	    move.activate();
+	    zoom.activate();
+	
+	    renderer.view.removeEventListener("mousemove", onMouseOver);
+	    renderer.view.removeEventListener("mouseenter", onMouseOver);
+	    renderer.view.removeEventListener("mouseleave", onMouseOut);
+	    active = false;
+	  };
+	
+	  this.isActive = function () {
+	    return active;
+	  };
+	
+	  this.mutate = function () {
+	    if (selectOne.isActive()) selectOne.mutate();
+	    if (move.isActive()) move.mutate();
+	    if (zoom.isActive()) zoom.mutate();
+	  };
+	
+	  this.render = function () {
+	    if (selectOne.isActive()) selectOne.render();
+	    if (move.isActive()) move.render();
+	    if (zoom.isActive()) zoom.render();
+	  };
+	};
 
 /***/ },
 /* 568 */
@@ -32079,95 +31975,7 @@
 	 */
 	"use strict";
 	
-	var SelectOne = __webpack_require__(569);
-	var Move = __webpack_require__(573);
-	var Zoom = __webpack_require__(576);
-	
-	module.exports = function (simulation, renderer) {
-	  var _this = this;
-	  var active = false;
-	  var selectOne = new SelectOne(simulation, renderer);
-	  var move = new Move(simulation, renderer);
-	  var zoom = new Zoom(simulation, renderer);
-	
-	  var onMouseOver = function onMouseOver(e) {
-	    selectOne.activate();
-	    move.activate();
-	    zoom.activate();
-	    renderer.lastX = e.clientX;
-	    renderer.lastY = e.clientY;
-	  };
-	
-	  var onMouseOut = function onMouseOut(e) {
-	    selectOne.deactivate();
-	    move.deactivate();
-	    zoom.deactivate();
-	  };
-	
-	  this.activate = function () {
-	    if (active) return;
-	
-	    renderer.view.addEventListener("mousemove", onMouseOver);
-	    renderer.view.addEventListener("mouseenter", onMouseOver);
-	    renderer.view.addEventListener("mouseleave", onMouseOut);
-	    active = true;
-	  };
-	
-	  this.deactivate = function () {
-	    if (!active) return;
-	
-	    renderer.view.removeEventListener("mousemove", onMouseOver);
-	    renderer.view.removeEventListener("mouseenter", onMouseOver);
-	    renderer.view.removeEventListener("mouseleave", onMouseOut);
-	    active = false;
-	  };
-	
-	  this.isActive = function () {
-	    return active;
-	  };
-	
-	  this.mutate = function () {
-	    if (selectOne.isActive()) selectOne.mutate();
-	    if (move.isActive()) move.mutate();
-	    if (zoom.isActive()) zoom.mutate();
-	  };
-	
-	  this.render = function () {
-	    if (selectOne.isActive()) selectOne.render();
-	    if (move.isActive()) move.render();
-	    if (zoom.isActive()) zoom.render();
-	  };
-	};
-
-/***/ },
-/* 569 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @licstart
-	 *
-	 * Copyright (C) 2016  Jeffrey W. Tickle
-	 *
-	 *
-	 * The JavaScript code in this page is free software: you can
-	 * redistribute it and/or modify it under the terms of the GNU
-	 * General Public License (GNU GPL) as published by the Free Software
-	 * Foundation, either version 3 of the License, or (at your option)
-	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
-	 * without even the implied warranty of MERCHANTABILITY or FITNESS
-	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-	 *
-	 * As additional permission under GNU GPL version 3 section 7, you
-	 * may distribute non-source (e.g., minimized or compacted) forms of
-	 * that code without the copy of the GNU GPL normally required by
-	 * section 4, provided you include this license notice and a URL
-	 * through which recipients can access the Corresponding Source.
-	 *
-	 * @licend
-	 */
-	"use strict";
-	
-	var _maxSafeInteger = __webpack_require__(570);
+	var _maxSafeInteger = __webpack_require__(569);
 	
 	var _maxSafeInteger2 = _interopRequireDefault(_maxSafeInteger);
 	
@@ -32263,20 +32071,20 @@
 	};
 
 /***/ },
+/* 569 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(570), __esModule: true };
+
+/***/ },
 /* 570 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(571), __esModule: true };
-
-/***/ },
-/* 571 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(572);
+	__webpack_require__(571);
 	module.exports = 0x1fffffffffffff;
 
 /***/ },
-/* 572 */
+/* 571 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.6 Number.MAX_SAFE_INTEGER
@@ -32285,7 +32093,7 @@
 	$export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
 
 /***/ },
-/* 573 */
+/* 572 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32312,8 +32120,8 @@
 	 */
 	"use strict";
 	
-	var Hammer = __webpack_require__(574);
-	var Logger = __webpack_require__(575);
+	var Hammer = __webpack_require__(573);
+	var Logger = __webpack_require__(574);
 	
 	module.exports = function (simulation, renderer) {
 	  var active = false;
@@ -32429,7 +32237,7 @@
 	};
 
 /***/ },
-/* 574 */
+/* 573 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -35078,7 +34886,7 @@
 
 
 /***/ },
-/* 575 */
+/* 574 */
 /***/ function(module, exports) {
 
 	/**
@@ -35125,7 +34933,7 @@
 	};
 
 /***/ },
-/* 576 */
+/* 575 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35152,8 +34960,8 @@
 	 */
 	"use strict";
 	
-	var Hammer = __webpack_require__(574);
-	var Logger = __webpack_require__(575);
+	var Hammer = __webpack_require__(573);
+	var Logger = __webpack_require__(574);
 	
 	module.exports = function (simulation, renderer) {
 	  var active = false;
