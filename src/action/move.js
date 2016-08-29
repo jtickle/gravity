@@ -78,6 +78,7 @@ module.exports = function(simulation, renderer) {
     log('onPress', e);
     touchMoving = true;
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+    if(e.touches.length > 1) onTouchEnd(e);
 
     simulation.debug.actionMoveType="touch";
     simulation.debug.actionMoveDx = 0;

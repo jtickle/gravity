@@ -32176,6 +32176,7 @@
 	    log('onPress', e);
 	    touchMoving = true;
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	    if (e.touches.length > 1) onTouchEnd(e);
 	
 	    simulation.debug.actionMoveType = "touch";
 	    simulation.debug.actionMoveDx = 0;
@@ -34960,6 +34961,12 @@
 	 */
 	"use strict";
 	
+	var _keys = __webpack_require__(564);
+	
+	var _keys2 = _interopRequireDefault(_keys);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var Hammer = __webpack_require__(573);
 	var Logger = __webpack_require__(574);
 	
@@ -34967,8 +34974,8 @@
 	  var active = false;
 	  var _this = this;
 	  var log = new Logger('action/zoom');
-	  var lastscale = 0;
 	  var pinching = false;
+	  var lastV = null;
 	
 	  var hammer = new Hammer(renderer.view);
 	
@@ -34978,48 +34985,89 @@
 	    renderer.applyScaleFactor(e.deltaY / 1000);
 	  };
 	
-	  var onPinchStart = function onPinchStart(e) {
+	  var getPinchStats = function getPinchStats(e) {
+	    var vs = {};
+	    v.x0 = e.touches[0].clientX;
+	    v.x1 = e.touches[1].clientX;
+	    v.y0 = e.touches[0].clientY;
+	    v.y1 = e.touches[1].clientY;
+	
+	    if (v.x0 > v.x1) {
+	      var derp = v.x0;
+	      v.x0 = v.x1;
+	      v, x1 = derp;
+	    }
+	
+	    if (v.y0 > v.y1) {
+	      var derp = v.y0;
+	      v.y0 = v.y1;
+	      v.y1 = derp;
+	    }
+	
+	    v.dx = v.x1 - v.x0;
+	    v.dy = v.y1 - v.y0;
+	
+	    v.centerX = v.dx / 2 + v.x0;
+	    v.centerY = v.dy / 2 + v.y0;
+	
+	    v.r = Math.sqrt(dx * dx + dy * dy);
+	
+	    for (var i in (0, _keys2.default)(v)) {
+	      simulation.debug['actionZoom' + i] = v[i];
+	    }
+	  };
+	
+	  var onTouchStart = function onTouchStart(e) {
+	    if (e.touches.length != 2) return;
+	
 	    pinching = true;
-	    lastscale = e.scale;
+	
+	    var v = getPinchStats(e);
+	    renderer.updateCursor(v.centerX, v.centerY);
+	    lastV = v;
+	
 	    simulation.debug.actionZoomType = "touch";
-	    simulation.debug.actionZoomDs = 0;
 	  };
 	
-	  var onPinchMove = function onPinchMove(e) {
+	  var onTouchMove = function onTouchMove(e) {
 	    if (!pinching) return;
-	    renderer.updateCursor(e.center.x, e.center.y);
-	    renderer.applyScaleFactor(e.scale - lastscale);
 	
-	    simulation.debug.actionZoomDs = e.scale - lastscale;
+	    var v = getPinchStats(e);
 	
-	    lastscale = e.scale;
+	    renderer.updateCursor(v.centerX, v.centerY);
+	    renderer.applyScaleFactor(v.r - lastV.r);
+	
+	    lastV = v;
 	  };
 	
-	  var onPinchEnd = function onPinchEnd(e) {
-	    lastscale = 0;
-	    pinching = false;
+	  var onTouchEnd = function onTouchEnd(e) {
+	    if (!pinching || e.touches.length > 1) return;
 	
+	    pinching = false;
+	    for (var i in (0, _keys2.default)(lastV)) {
+	      delete simulation.debug['actionZoom' + i];
+	    }
+	    lastV = null;
 	    delete simulation.debug.actionZoomType;
-	    delete simulation.debug.actionSoomDs;
 	  };
 	
 	  this.activate = function () {
 	    if (active) return;
 	    renderer.view.addEventListener("wheel", onWheel);
-	    hammer.on("pinchstart", onPinchStart);
-	    hammer.on("pinchmove", onPinchMove);
-	    hammer.on("pinchend", onPinchEnd);
-	    hammer.on("pinchcancel", onPinchEnd);
+	    renderer.view.addEventListener("touchstart", onTouchStart);
+	    renderer.view.addEventListener("touchmove", onTouchMove);
+	    renderer.view.addEventListener("touchend", onTouchSEnd);
+	    renderer.view.addEventListener("touchcancel", onTouchEnd);
 	    active = true;
 	  };
 	
 	  this.deactivate = function () {
 	    if (!active) return;
 	    renderer.view.removeEventListener("wheel", onWheel);
-	    hammer.off("pinchstart", onPinchStart);
-	    hammer.off("pinchmove", onPinchMove);
-	    hammer.off("pinchend", onPinchEnd);
-	    hammer.off("pinchcancel", onPinchEnd);
+	    renderer.view.removeEventListener("touchstart", onTouchStart);
+	    renderer.view.removeEventListener("touchmove", onTouchMove);
+	    renderer.view.removeEventListener("touchend", onTouchSEnd);
+	    renderer.view.removeEventListener("touchcancel", onTouchEnd);
 	    active = false;
 	  };
 	
