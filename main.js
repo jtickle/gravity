@@ -32172,17 +32172,6 @@
 	    renderer.pan(e.movementX, e.movementY);
 	  };
 	
-	  var onTouchStart = function onTouchStart(e) {
-	    log('onPress', e);
-	    touchMoving = true;
-	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-	    if (e.touches.length > 1) onTouchEnd(e);
-	
-	    simulation.debug.actionMoveType = "touch";
-	    simulation.debug.actionMoveDx = 0;
-	    simulation.debug.actionMoveDy = 0;
-	  };
-	
 	  var onTouchMove = function onTouchMove(e) {
 	    if (!touchMoving) return;
 	    log('onTouchMove', e);
@@ -32202,6 +32191,17 @@
 	    delete simulation.debug.actionMoveDx;
 	    delete simulation.debug.actionMoveDy;
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	  };
+	
+	  var onTouchStart = function onTouchStart(e) {
+	    log('onPress', e);
+	    touchMoving = true;
+	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	    if (e.touches.length > 1) onTouchEnd(e);
+	
+	    simulation.debug.actionMoveType = "touch";
+	    simulation.debug.actionMoveDx = 0;
+	    simulation.debug.actionMoveDy = 0;
 	  };
 	
 	  this.activate = function () {
@@ -34986,7 +34986,7 @@
 	  };
 	
 	  var getPinchStats = function getPinchStats(e) {
-	    var vs = {};
+	    var v = {};
 	    v.x0 = e.touches[0].clientX;
 	    v.x1 = e.touches[1].clientX;
 	    v.y0 = e.touches[0].clientY;

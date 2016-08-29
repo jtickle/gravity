@@ -74,17 +74,6 @@ module.exports = function(simulation, renderer) {
     renderer.pan(e.movementX, e.movementY);
   }
 
-  var onTouchStart = function(e) {
-    log('onPress', e);
-    touchMoving = true;
-    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-    if(e.touches.length > 1) onTouchEnd(e);
-
-    simulation.debug.actionMoveType="touch";
-    simulation.debug.actionMoveDx = 0;
-    simulation.debug.actionMoveDy = 0;
-  }
-
   var onTouchMove = function(e) {
     if(!touchMoving) return;
     log('onTouchMove', e);
@@ -104,6 +93,17 @@ module.exports = function(simulation, renderer) {
     delete simulation.debug.actionMoveDx;
     delete simulation.debug.actionMoveDy;
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+  }
+
+  var onTouchStart = function(e) {
+    log('onPress', e);
+    touchMoving = true;
+    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+    if(e.touches.length > 1) onTouchEnd(e);
+
+    simulation.debug.actionMoveType="touch";
+    simulation.debug.actionMoveDx = 0;
+    simulation.debug.actionMoveDy = 0;
   }
 
   this.activate = function() {

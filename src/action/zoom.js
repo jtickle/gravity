@@ -41,7 +41,7 @@ module.exports = function(simulation, renderer) {
   }
 
   var getPinchStats = function(e) {
-    var vs = {};
+    var v = {};
     v.x0 = e.touches[0].clientX;
     v.x1 = e.touches[1].clientX;
     v.y0 = e.touches[0].clientY;
