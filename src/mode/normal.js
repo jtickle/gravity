@@ -58,8 +58,8 @@ module.exports = function(simulation, renderer) {
   this.deactivate = function() {
     if(!active) return;
 
-    move.activate();
-    zoom.activate();
+    move.deactivate();
+    zoom.deactivate();
 
     renderer.view.removeEventListener("mousemove", onMouseOver);
     renderer.view.removeEventListener("mouseenter", onMouseOver);

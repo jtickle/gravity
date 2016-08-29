@@ -95,7 +95,7 @@ module.exports = function(simulation, renderer) {
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
   }
 
-  var onTouchEnd = function(e) {
+  var onPressUp = function(e) {
     log('onTouchEnd', e);
     touchMoving = false;
 
@@ -111,9 +111,8 @@ module.exports = function(simulation, renderer) {
     renderer.view.addEventListener("mousemove", onMouseMove);
     renderer.view.addEventListener("mouseup", onMouseUp);
     hammer.on('press', onPress);
+    hammer.on('pressup', onPressUp);
     renderer.view.addEventListener("touchmove", onTouchMove);
-    renderer.view.addEventListener("touchend", onTouchEnd);
-    renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
 
@@ -123,9 +122,8 @@ module.exports = function(simulation, renderer) {
     renderer.view.removeEventListener("mousemove", onMouseMove);
     renderer.view.removeEventListener("mouseup", onMouseUp);
     hammer.off('press', onPress);
+    hammer.off('pressup', onPressUp);
     renderer.view.removeEventListener("touchmove", onTouchMove);
-    renderer.view.removeEventListener("touchend", onTouchEnd);
-    renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
 
