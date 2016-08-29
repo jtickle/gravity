@@ -29,12 +29,11 @@ var UI = require('ui');
 var NormalMode = require('mode/normal');
 
 var run = function() {
-
-  // The Renderer
-  var renderer = new Renderer(0x000000, 'gravity');
-
   // The Simulation
   var simulation = new Simulation(1);
+
+  // The Renderer
+  var renderer = new Renderer(0x000000, 'gravity', simulation.debug);
 
   // The UI
   var ui = new UI('side', simulation, renderer);

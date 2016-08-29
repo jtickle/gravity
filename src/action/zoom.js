@@ -29,24 +29,59 @@ module.exports = function(simulation, renderer) {
   var active = false;
   var _this = this;
   var log = new Logger('action/zoom');
+  var lastscale = 0;
+  var pinching = false;
 
   var hammer = new Hammer(renderer.view);
 
   var onWheel = function(e) {
     log('onWheel', e);
     renderer.updateCursor(e.clientX, e.clientY);
-    renderer.applyScaleFactor(e.deltaY);
+    renderer.applyScaleFactor(e.deltaY / 1000);
+  }
+
+  var onPinchStart = function(e) {
+    pinching = true;
+    lastscale = e.scale;
+    simulation.debug.actionZoomType = "touch";
+    simulation.debug.actionZoomDs = 0;
+  }
+
+  var onPinchMove = function(e) {
+    if(!pinching) return;
+    renderer.updateCursor(e.center.x, e.center.y);
+    renderer.applyScaleFactor(e.scale - lastscale);
+
+    simulation.debug.actionZoomDs = e.scale - lastscale;
+
+    lastscale = e.scale
+  }
+
+  var onPinchEnd = function(e) {
+    lastscale = 0;
+    pinching = false;
+
+    delete simulation.debug.actionZoomType;
+    delete simulation.debug.actionSoomDs;
   }
 
   this.activate = function() {
     if(active) return;
     renderer.view.addEventListener("wheel", onWheel);
+    hammer.on("pinchstart", onPinchStart);
+    hammer.on("pinchmove", onPinchMove);
+    hammer.on("pinchend", onPinchEnd);
+    hammer.on("pinchcancel", onPinchEnd);
     active = true;
   }
 
   this.deactivate = function() {
     if(!active) return;
     renderer.view.removeEventListener("wheel", onWheel);
+    hammer.off("pinchstart", onPinchStart);
+    hammer.off("pinchmove", onPinchMove);
+    hammer.off("pinchend", onPinchEnd);
+    hammer.off("pinchcancel", onPinchEnd);
     active = false;
   }
 

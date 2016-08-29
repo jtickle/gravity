@@ -24,46 +24,32 @@
 
 var React = require('react');
 
-class ViewportStats extends React.Component {
+class DebugTable extends React.Component {
   render() {
-    var p = this.props;
-    return (
-      <table id="viewport">
-        <thead>
-          <tr>
-            <td colSpan="2">Viewport</td>
-            <td colSpan="2">Cursor</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>X</td>
-            <td>{p.vx}</td>
-            <td>WX</td>
-            <td>{p.cwx}</td>
-          </tr>
-          <tr>
-            <td>Y</td>
-            <td>{p.vy}</td>
-            <td>WY</td>
-            <td>{p.cwy}</td>
-          </tr>
-          <tr>
-            <td>B</td>
-            <td>{p.vb}</td>
-            <td>SX</td>
-            <td>{p.csx}</td>
-          </tr>
-          <tr>
-            <td>S</td>
-            <td>{p.vs}</td>
-            <td>SY</td>
-            <td>{p.csy}</td>
-          </tr>
-        </tbody>
-      </table>
-    );
+    var d = this.props.debug;
+    if(Object.keys(d).length == 0) {
+      return (<p>No Debug Data</p>);
+    } else {
+      return (
+        <table id="debug">
+          <thead>
+            <tr>
+              <td colSpan="2">Debugging</td>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(d).map(function(v, i) {
+              return (
+                <tr key={v}>
+                  <th>{v}</th>
+                  <td>{d[v]}</td>
+                </tr>
+              );})}
+          </tbody>
+        </table>
+      );
+    }
   }
 }
 
-module.exports = ViewportStats;
+module.exports = DebugTable;

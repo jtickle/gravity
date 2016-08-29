@@ -8189,15 +8189,14 @@
 	var Simulation = __webpack_require__(300);
 	//var actionQueueFac = require('actionQueue.js').fac;
 	var UI = __webpack_require__(320);
-	var NormalMode = __webpack_require__(564);
+	var NormalMode = __webpack_require__(568);
 	
 	var run = function run() {
-	
-	  // The Renderer
-	  var renderer = new Renderer(0x000000, 'gravity');
-	
 	  // The Simulation
 	  var simulation = new Simulation(1);
+	
+	  // The Renderer
+	  var renderer = new Renderer(0x000000, 'gravity', simulation.debug);
 	
 	  // The UI
 	  var ui = new UI('side', simulation, renderer);
@@ -8348,7 +8347,7 @@
 	 */
 	"use strict";
 	
-	module.exports = function (bgColor, canvasId) {
+	module.exports = function (bgColor, canvasId, debug) {
 	  // The width and height of the physical viewport
 	  var width, height;
 	
@@ -8376,6 +8375,8 @@
 	    height = document.documentElement.clientHeight;
 	    view.getContext('2d').canvas.width = width;
 	    view.getContext('2d').canvas.height = height;
+	    debug.rendWidth = width;
+	    debug.rendHeight = height;
 	  };
 	  resizeSelf();
 	
@@ -8397,6 +8398,8 @@
 	  var setScaleBase = function setScaleBase(s) {
 	    scaleBase = s;
 	    scale = Math.pow(Math.E, scaleBase);
+	    debug.rScale = scale;
+	    debug.scaleBase = scaleBase;
 	  };
 	
 	  var getScaleBase = function getScaleBase() {
@@ -8478,6 +8481,8 @@
 	  this.updateCursor = function (x, y) {
 	    _this.lastX = x;
 	    _this.lastY = y;
+	    debug.rLastX = x;
+	    debug.rLastY = y;
 	  };
 	
 	  this.applyScaleFactor = function (factor) {
@@ -8485,17 +8490,23 @@
 	    var y = screenToY(_this.lastY);
 	    var dx = (x - _this.centerX) / scale;
 	    var dy = (y - _this.centerY) / scale;
-	    setScaleBase(scaleBase + factor / 1000);
-	    _this.centerX = x - dx * scale;
-	    _this.centerY = y - dy * scale;
+	    setScaleBase(scaleBase + factor);
+	    _this.setCenter(x - dx * scale, y - dy * scale);
 	  };
 	
 	  this.pan = function (dx, dy) {
-	    _this.centerX -= dx * scale;
-	    _this.centerY -= dy * scale;
+	    _this.setCenter(_this.centerX - dx * scale, _this.centerY - dy * scale);
+	  };
+	
+	  this.setCenter = function (x, y) {
+	    _this.centerX = x;
+	    _this.centerY = y;
+	    debug.rCenterX = x;
+	    debug.rCenterY = y;
 	  };
 	
 	  this.blank();
+	  _this.setCenter(0, 0);
 	};
 
 /***/ },
@@ -8680,6 +8691,8 @@
 	  this.stars = [];
 	  this.selected = [];
 	  this.mode = null;
+	
+	  this.debug = {};
 	};
 
 /***/ },
@@ -9029,6 +9042,7 @@
 	var ReactDOM = __webpack_require__(353);
 	var StarProps = __webpack_require__(491);
 	var ViewportStats = __webpack_require__(563);
+	var DebugTable = __webpack_require__(564);
 	
 	module.exports = function (sideid, simulation, renderer) {
 	  this.render = function () {
@@ -9041,15 +9055,7 @@
 	      'div',
 	      null,
 	      React.createElement(StarProps, { selected: simulation.selected }),
-	      React.createElement(ViewportStats, {
-	        vx: renderer.centerX,
-	        vy: renderer.centerY,
-	        vb: renderer.getScaleBase(),
-	        vs: renderer.getScale(),
-	        cwx: cwx,
-	        cwy: cwy,
-	        csx: csx,
-	        csy: csy })
+	      React.createElement(DebugTable, { debug: simulation.debug })
 	    ), document.getElementById(sideid));
 	  };
 	};
@@ -31771,7 +31777,7 @@
 	      var p = this.props;
 	      return React.createElement(
 	        "table",
-	        null,
+	        { id: "viewport" },
 	        React.createElement(
 	          "thead",
 	          null,
@@ -31926,9 +31932,156 @@
 	 */
 	"use strict";
 	
-	var SelectOne = __webpack_require__(565);
-	var Move = __webpack_require__(569);
-	var Zoom = __webpack_require__(572);
+	var _keys = __webpack_require__(565);
+	
+	var _keys2 = _interopRequireDefault(_keys);
+	
+	var _getPrototypeOf = __webpack_require__(492);
+	
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+	
+	var _classCallCheck2 = __webpack_require__(503);
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _createClass2 = __webpack_require__(504);
+	
+	var _createClass3 = _interopRequireDefault(_createClass2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(508);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(555);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var React = __webpack_require__(321);
+	
+	var DebugTable = function (_React$Component) {
+	  (0, _inherits3.default)(DebugTable, _React$Component);
+	
+	  function DebugTable() {
+	    (0, _classCallCheck3.default)(this, DebugTable);
+	    return (0, _possibleConstructorReturn3.default)(this, (DebugTable.__proto__ || (0, _getPrototypeOf2.default)(DebugTable)).apply(this, arguments));
+	  }
+	
+	  (0, _createClass3.default)(DebugTable, [{
+	    key: "render",
+	    value: function render() {
+	      var d = this.props.debug;
+	      if ((0, _keys2.default)(d).length == 0) {
+	        return React.createElement(
+	          "p",
+	          null,
+	          "No Debug Data"
+	        );
+	      } else {
+	        return React.createElement(
+	          "table",
+	          { id: "debug" },
+	          React.createElement(
+	            "thead",
+	            null,
+	            React.createElement(
+	              "tr",
+	              null,
+	              React.createElement(
+	                "td",
+	                { colSpan: "2" },
+	                "Debugging"
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            "tbody",
+	            null,
+	            (0, _keys2.default)(d).map(function (v, i) {
+	              return React.createElement(
+	                "tr",
+	                { key: v },
+	                React.createElement(
+	                  "th",
+	                  null,
+	                  v
+	                ),
+	                React.createElement(
+	                  "td",
+	                  null,
+	                  d[v]
+	                )
+	              );
+	            })
+	          )
+	        );
+	      }
+	    }
+	  }]);
+	  return DebugTable;
+	}(React.Component);
+	
+	module.exports = DebugTable;
+
+/***/ },
+/* 565 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(566), __esModule: true };
+
+/***/ },
+/* 566 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(567);
+	module.exports = __webpack_require__(307).Object.keys;
+
+/***/ },
+/* 567 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.14 Object.keys(O)
+	var toObject = __webpack_require__(495)
+	  , $keys    = __webpack_require__(522);
+	
+	__webpack_require__(502)('keys', function(){
+	  return function keys(it){
+	    return $keys(toObject(it));
+	  };
+	});
+
+/***/ },
+/* 568 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @licstart
+	 *
+	 * Copyright (C) 2016  Jeffrey W. Tickle
+	 *
+	 *
+	 * The JavaScript code in this page is free software: you can
+	 * redistribute it and/or modify it under the terms of the GNU
+	 * General Public License (GNU GPL) as published by the Free Software
+	 * Foundation, either version 3 of the License, or (at your option)
+	 * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+	 * without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+	 *
+	 * As additional permission under GNU GPL version 3 section 7, you
+	 * may distribute non-source (e.g., minimized or compacted) forms of
+	 * that code without the copy of the GNU GPL normally required by
+	 * section 4, provided you include this license notice and a URL
+	 * through which recipients can access the Corresponding Source.
+	 *
+	 * @licend
+	 */
+	"use strict";
+	
+	var SelectOne = __webpack_require__(569);
+	var Move = __webpack_require__(573);
+	var Zoom = __webpack_require__(576);
 	
 	module.exports = function (simulation, renderer) {
 	  var _this = this;
@@ -31987,7 +32140,7 @@
 	};
 
 /***/ },
-/* 565 */
+/* 569 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32014,7 +32167,7 @@
 	 */
 	"use strict";
 	
-	var _maxSafeInteger = __webpack_require__(566);
+	var _maxSafeInteger = __webpack_require__(570);
 	
 	var _maxSafeInteger2 = _interopRequireDefault(_maxSafeInteger);
 	
@@ -32039,6 +32192,13 @@
 	    if (active) return;
 	    renderer.view.addEventListener("mousemove", onMouseMove);
 	    renderer.view.addEventListener("click", onClick);
+	
+	    simulation.debug.selectX = 0;
+	    simulation.debug.selectY = 0;
+	    simulation.debug.nearestId = 0;
+	    simulation.debug.nearestX = 0;
+	    simulation.debug.nearestY = 0;
+	
 	    active = true;
 	  };
 	
@@ -32067,6 +32227,12 @@
 	        minimum = distance;
 	      }
 	    });
+	
+	    simulation.debug.selectX = _this.x;
+	    simulation.debug.selectY = _this.y;
+	    simulation.debug.nearestId = nearest.id;
+	    simulation.debug.nearestX = nearest.x;
+	    simulation.debug.nearestY = nearest.y;
 	  };
 	
 	  this.render = function () {
@@ -32097,20 +32263,20 @@
 	};
 
 /***/ },
-/* 566 */
+/* 570 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(567), __esModule: true };
+	module.exports = { "default": __webpack_require__(571), __esModule: true };
 
 /***/ },
-/* 567 */
+/* 571 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(568);
+	__webpack_require__(572);
 	module.exports = 0x1fffffffffffff;
 
 /***/ },
-/* 568 */
+/* 572 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.6 Number.MAX_SAFE_INTEGER
@@ -32119,7 +32285,7 @@
 	$export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
 
 /***/ },
-/* 569 */
+/* 573 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32146,8 +32312,8 @@
 	 */
 	"use strict";
 	
-	var Hammer = __webpack_require__(570);
-	var Logger = __webpack_require__(571);
+	var Hammer = __webpack_require__(574);
+	var Logger = __webpack_require__(575);
 	
 	module.exports = function (simulation, renderer) {
 	  var active = false;
@@ -32163,6 +32329,10 @@
 	    if (touchMoving) return;
 	    if (e.button != 2) return;
 	
+	    simulation.debug.actionMoveType = "mouse";
+	    simulation.debug.actionMoveDx = 0;
+	    simulation.debug.actionMoveDy = 0;
+	
 	    log('onMouseDown', e);
 	    mouseMoving = true;
 	    cursor = document.body.style.cursor;
@@ -32172,6 +32342,10 @@
 	  var onMouseUp = function onMouseUp(e) {
 	    if (touchMoving) return;
 	    if (e.button != 2) return;
+	
+	    delete simulation.debug.actionMoveType;
+	    delete simulation.debug.actionMoveDx;
+	    delete simulation.debug.actionMoveDy;
 	
 	    log('onMouseUp', e);
 	    mouseMoving = false;
@@ -32183,6 +32357,9 @@
 	    if (touchMoving) return;
 	    if (!mouseMoving) return;
 	
+	    simulation.debug.actionMoveDx = e.movementX;
+	    simulation.debug.actionMoveDy = e.movementY;
+	
 	    log('onMouseMove', e);
 	    renderer.pan(e.movementX, e.movementY);
 	  };
@@ -32191,18 +32368,30 @@
 	    log('onPress', e);
 	    touchMoving = true;
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	
+	    simulation.debug.actionMoveType = "touch";
+	    simulation.debug.actionMoveDx = 0;
+	    simulation.debug.actionMoveDy = 0;
 	  };
 	
 	  var onTouchMove = function onTouchMove(e) {
 	    if (!touchMoving) return;
 	    log('onTouchMove', e);
+	
 	    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
+	    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
+	    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
+	
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
 	  var onTouchEnd = function onTouchEnd(e) {
 	    log('onTouchEnd', e);
 	    touchMoving = false;
+	
+	    delete simulation.debug.actionMoveType;
+	    delete simulation.debug.actionMoveDx;
+	    delete simulation.debug.actionMoveDy;
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
@@ -32240,7 +32429,7 @@
 	};
 
 /***/ },
-/* 570 */
+/* 574 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -34889,7 +35078,7 @@
 
 
 /***/ },
-/* 571 */
+/* 575 */
 /***/ function(module, exports) {
 
 	/**
@@ -34936,7 +35125,7 @@
 	};
 
 /***/ },
-/* 572 */
+/* 576 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34963,8 +35152,8 @@
 	 */
 	"use strict";
 	
-	var Hammer = __webpack_require__(570);
-	var Logger = __webpack_require__(571);
+	var Hammer = __webpack_require__(574);
+	var Logger = __webpack_require__(575);
 	
 	module.exports = function (simulation, renderer) {
 	  var active = false;
@@ -34978,24 +35167,32 @@
 	  var onWheel = function onWheel(e) {
 	    log('onWheel', e);
 	    renderer.updateCursor(e.clientX, e.clientY);
-	    renderer.applyScaleFactor(e.deltaY);
+	    renderer.applyScaleFactor(e.deltaY / 1000);
 	  };
 	
 	  var onPinchStart = function onPinchStart(e) {
 	    pinching = true;
 	    lastscale = e.scale;
+	    simulation.debug.actionZoomType = "touch";
+	    simulation.debug.actionZoomDs = 0;
 	  };
 	
 	  var onPinchMove = function onPinchMove(e) {
 	    if (!pinching) return;
 	    renderer.updateCursor(e.center.x, e.center.y);
 	    renderer.applyScaleFactor(e.scale - lastscale);
+	
+	    simulation.debug.actionZoomDs = e.scale - lastscale;
+	
 	    lastscale = e.scale;
 	  };
 	
 	  var onPinchEnd = function onPinchEnd(e) {
 	    lastscale = 0;
 	    pinching = false;
+	
+	    delete simulation.debug.actionZoomType;
+	    delete simulation.debug.actionSoomDs;
 	  };
 	
 	  this.activate = function () {

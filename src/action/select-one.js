@@ -41,6 +41,13 @@ module.exports = function(simulation, renderer) {
     if(active) return;
     renderer.view.addEventListener("mousemove", onMouseMove);
     renderer.view.addEventListener("click", onClick);
+
+    simulation.debug.selectX   = 0;
+    simulation.debug.selectY   = 0;
+    simulation.debug.nearestId = 0;
+    simulation.debug.nearestX  = 0;
+    simulation.debug.nearestY  = 0;
+
     active = true;
   }
 
@@ -70,6 +77,12 @@ module.exports = function(simulation, renderer) {
         minimum = distance;
       }
     });
+
+    simulation.debug.selectX   = _this.x;
+    simulation.debug.selectY   = _this.y;
+    simulation.debug.nearestId = nearest.id;
+    simulation.debug.nearestX  = nearest.x;
+    simulation.debug.nearestY  = nearest.y;
   }
 
   this.render = function() {

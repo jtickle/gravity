@@ -22,7 +22,7 @@
  */
 "use strict";
 
-module.exports = function(bgColor, canvasId) {
+module.exports = function(bgColor, canvasId, debug) {
   // The width and height of the physical viewport
   var width, height;
 
@@ -50,6 +50,8 @@ module.exports = function(bgColor, canvasId) {
     height = document.documentElement.clientHeight;
     view.getContext('2d').canvas.width = width;
     view.getContext('2d').canvas.height = height;
+    debug.rendWidth = width;
+    debug.rendHeight = height;
   };
   resizeSelf();
 
@@ -71,6 +73,8 @@ module.exports = function(bgColor, canvasId) {
   var setScaleBase = function(s) {
     scaleBase = s;
     scale = Math.pow(Math.E, scaleBase);
+    debug.rScale = scale;
+    debug.scaleBase = scaleBase;
   }
 
   var getScaleBase = function() {
@@ -152,6 +156,8 @@ module.exports = function(bgColor, canvasId) {
   this.updateCursor = function(x, y) {
     _this.lastX = x;
     _this.lastY = y;
+    debug.rLastX = x;
+    debug.rLastY = y;
   }
 
   this.applyScaleFactor = function(factor) {
@@ -159,15 +165,23 @@ module.exports = function(bgColor, canvasId) {
     var y = screenToY(_this.lastY);
     var dx = (x - _this.centerX) / scale;
     var dy = (y - _this.centerY) / scale;
-    setScaleBase(scaleBase + (factor / 1000));
-    _this.centerX = x - (dx * scale);
-    _this.centerY = y - (dy * scale);
+    setScaleBase(scaleBase + (factor));
+    _this.setCenter(x - (dx * scale),
+                    y - (dy * scale));
   }
 
   this.pan = function(dx, dy) {
-    _this.centerX -= dx * scale;
-    _this.centerY -= dy * scale;
+    _this.setCenter(_this.centerX - dx * scale,
+                    _this.centerY - dy * scale);
+  }
+
+  this.setCenter = function(x, y) {
+    _this.centerX = x;
+    _this.centerY = y;
+    debug.rCenterX = x;
+    debug.rCenterY = y;
   }
 
   this.blank();
+  _this.setCenter(0,0);
 }

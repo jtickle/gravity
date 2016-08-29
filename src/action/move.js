@@ -39,6 +39,10 @@ module.exports = function(simulation, renderer) {
     if(touchMoving) return;
     if(e.button != 2) return;
 
+    simulation.debug.actionMoveType = "mouse";
+    simulation.debug.actionMoveDx = 0;
+    simulation.debug.actionMoveDy = 0;
+
     log('onMouseDown', e);
     mouseMoving = true;
     cursor = document.body.style.cursor;
@@ -48,6 +52,10 @@ module.exports = function(simulation, renderer) {
   var onMouseUp = function(e) {
     if(touchMoving) return;
     if(e.button != 2) return;
+
+    delete simulation.debug.actionMoveType;
+    delete simulation.debug.actionMoveDx;
+    delete simulation.debug.actionMoveDy;
 
     log('onMouseUp', e);
     mouseMoving = false;
@@ -59,6 +67,9 @@ module.exports = function(simulation, renderer) {
     if(touchMoving) return;
     if(!mouseMoving) return;
 
+    simulation.debug.actionMoveDx = e.movementX;
+    simulation.debug.actionMoveDy = e.movementY;
+
     log('onMouseMove', e);
     renderer.pan(e.movementX, e.movementY);
   }
@@ -67,18 +78,30 @@ module.exports = function(simulation, renderer) {
     log('onPress', e);
     touchMoving = true;
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+
+    simulation.debug.actionMoveType="touch";
+    simulation.debug.actionMoveDx = 0;
+    simulation.debug.actionMoveDy = 0;
   }
 
   var onTouchMove = function(e) {
     if(!touchMoving) return;
     log('onTouchMove', e);
+
     renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
+    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
+    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
+
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
   }
 
   var onTouchEnd = function(e) {
     log('onTouchEnd', e);
     touchMoving = false;
+
+    delete simulation.debug.actionMoveType;
+    delete simulation.debug.actionMoveDx;
+    delete simulation.debug.actionMoveDy;
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
   }
 

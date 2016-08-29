@@ -177,5 +177,7 @@ module.exports = function(G0) {
   this.stars = [];
   this.selected = [];
   this.mode = null;
+
+  this.debug = {};
   
 }
