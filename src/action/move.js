@@ -85,8 +85,25 @@ module.exports = function(simulation, renderer) {
   }
 
   var onTouchMove = function(e) {
-    if(!touchMoving) return;
-    log('onTouchMove', e);
+    if(!touchMoving) {
+      if(e.touches.length == 1) {
+        touchMoving = true;
+        renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+        simulation.debug.actionMoveType="touch";
+        simulation.debug.actionMoveDx = 0;
+        simulation.debug.actionMoveDy = 0;
+      } else return;
+
+      if(e.touches.length != 1) {
+        touchMoving = false;
+        delete simulation.debug.actionMoveType;
+        delete simulation.debug.actionMoveDx;
+        delete simulation.debug.actionMoveDy;
+
+        return;
+      }
+    }
+
     if(e.touches.length > 1) {
       onTouchEnd(e);
       return;
@@ -99,29 +116,12 @@ module.exports = function(simulation, renderer) {
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
   }
 
-  var onTouchStart = function(e) {
-    log('onPress', e);
-    touchMoving = true;
-    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-    if(e.touches.length > 1) {
-      onTouchEnd(e);
-      return;
-    }
-
-    simulation.debug.actionMoveType="touch";
-    simulation.debug.actionMoveDx = 0;
-    simulation.debug.actionMoveDy = 0;
-  }
-
   this.activate = function() {
     if(active) return;
     renderer.view.addEventListener("mousedown", onMouseDown);
     renderer.view.addEventListener("mousemove", onMouseMove);
     renderer.view.addEventListener("mouseup", onMouseUp);
-    renderer.view.addEventListener("touchstart", onTouchStart);
     renderer.view.addEventListener("touchmove", onTouchMove);
-    renderer.view.addEventListener("touchend", onTouchEnd);
-    renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
 
@@ -130,10 +130,7 @@ module.exports = function(simulation, renderer) {
     renderer.view.removeEventListener("mousedown", onMouseDown);
     renderer.view.removeEventListener("mousemove", onMouseMove);
     renderer.view.removeEventListener("mouseup", onMouseUp);
-    renderer.view.removeEventListener("touchstart", onTouchStart);
     renderer.view.removeEventListener("touchmove", onTouchMove);
-    renderer.view.removeEventListener("touchend", onTouchEnd);
-    renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
 

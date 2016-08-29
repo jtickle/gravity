@@ -66,7 +66,7 @@ module.exports = function(simulation, renderer) {
     v.centerX = (v.dx / 2) + v.x0;
     v.centerY = (v.dy / 2) + v.y0;
 
-    v.r = Math.sqrt(dx*dx + dy*dy);
+    v.r = Math.sqrt(v.dx*v.dx + v.dy*v.dy);
 
     for(var i in Object.keys(v)) {
       simulation.debug['actionZoom'+i] = v[i];

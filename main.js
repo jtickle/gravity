@@ -32183,8 +32183,25 @@
 	  };
 	
 	  var onTouchMove = function onTouchMove(e) {
-	    if (!touchMoving) return;
-	    log('onTouchMove', e);
+	    if (!touchMoving) {
+	      if (e.touches.length == 1) {
+	        touchMoving = true;
+	        renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	        simulation.debug.actionMoveType = "touch";
+	        simulation.debug.actionMoveDx = 0;
+	        simulation.debug.actionMoveDy = 0;
+	      } else return;
+	
+	      if (e.touches.length != 1) {
+	        touchMoving = false;
+	        delete simulation.debug.actionMoveType;
+	        delete simulation.debug.actionMoveDx;
+	        delete simulation.debug.actionMoveDy;
+	
+	        return;
+	      }
+	    }
+	
 	    if (e.touches.length > 1) {
 	      onTouchEnd(e);
 	      return;
@@ -32197,29 +32214,12 @@
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
-	  var onTouchStart = function onTouchStart(e) {
-	    log('onPress', e);
-	    touchMoving = true;
-	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-	    if (e.touches.length > 1) {
-	      onTouchEnd(e);
-	      return;
-	    }
-	
-	    simulation.debug.actionMoveType = "touch";
-	    simulation.debug.actionMoveDx = 0;
-	    simulation.debug.actionMoveDy = 0;
-	  };
-	
 	  this.activate = function () {
 	    if (active) return;
 	    renderer.view.addEventListener("mousedown", onMouseDown);
 	    renderer.view.addEventListener("mousemove", onMouseMove);
 	    renderer.view.addEventListener("mouseup", onMouseUp);
-	    renderer.view.addEventListener("touchstart", onTouchStart);
 	    renderer.view.addEventListener("touchmove", onTouchMove);
-	    renderer.view.addEventListener("touchend", onTouchEnd);
-	    renderer.view.addEventListener("touchcancel", onTouchEnd);
 	    active = true;
 	  };
 	
@@ -32228,10 +32228,7 @@
 	    renderer.view.removeEventListener("mousedown", onMouseDown);
 	    renderer.view.removeEventListener("mousemove", onMouseMove);
 	    renderer.view.removeEventListener("mouseup", onMouseUp);
-	    renderer.view.removeEventListener("touchstart", onTouchStart);
 	    renderer.view.removeEventListener("touchmove", onTouchMove);
-	    renderer.view.removeEventListener("touchend", onTouchEnd);
-	    renderer.view.removeEventListener("touchcancel", onTouchEnd);
 	    active = false;
 	  };
 	
@@ -35018,7 +35015,7 @@
 	    v.centerX = v.dx / 2 + v.x0;
 	    v.centerY = v.dy / 2 + v.y0;
 	
-	    v.r = Math.sqrt(dx * dx + dy * dy);
+	    v.r = Math.sqrt(v.dx * v.dx + v.dy * v.dy);
 	
 	    for (var i in (0, _keys2.default)(v)) {
 	      simulation.debug['actionZoom' + i] = v[i];
