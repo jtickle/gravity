@@ -50,7 +50,7 @@ module.exports = function(simulation, renderer) {
     if(v.x0 > v.x1) {
       var derp = v.x0;
       v.x0 = v.x1;
-      v,x1 = derp;
+      v.x1 = derp;
     }
 
     if(v.y0 > v.y1) {
