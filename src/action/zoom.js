@@ -111,7 +111,7 @@ module.exports = function(simulation, renderer) {
     renderer.view.addEventListener("wheel", onWheel);
     renderer.view.addEventListener("touchstart", onTouchStart);
     renderer.view.addEventListener("touchmove", onTouchMove);
-    renderer.view.addEventListener("touchend", onTouchSEnd);
+    renderer.view.addEventListener("touchend", onTouchEnd);
     renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
@@ -121,7 +121,7 @@ module.exports = function(simulation, renderer) {
     renderer.view.removeEventListener("wheel", onWheel);
     renderer.view.removeEventListener("touchstart", onTouchStart);
     renderer.view.removeEventListener("touchmove", onTouchMove);
-    renderer.view.removeEventListener("touchend", onTouchSEnd);
+    renderer.view.removeEventListener("touchend", onTouchEnd);
     renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
