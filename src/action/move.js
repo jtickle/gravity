@@ -74,16 +74,6 @@ module.exports = function(simulation, renderer) {
     renderer.pan(e.movementX, e.movementY);
   }
 
-  var onTouchEnd = function(e) {
-    log('onTouchEnd', e);
-    touchMoving = false;
-
-    delete simulation.debug.actionMoveType;
-    delete simulation.debug.actionMoveDx;
-    delete simulation.debug.actionMoveDy;
-    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-  }
-
   var onTouchMove = function(e) {
     if(!touchMoving) {
       if(e.touches.length == 1) {
@@ -102,11 +92,6 @@ module.exports = function(simulation, renderer) {
 
         return;
       }
-    }
-
-    if(e.touches.length > 1) {
-      onTouchEnd(e);
-      return;
     }
 
     renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);

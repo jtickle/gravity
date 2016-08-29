@@ -32172,16 +32172,6 @@
 	    renderer.pan(e.movementX, e.movementY);
 	  };
 	
-	  var onTouchEnd = function onTouchEnd(e) {
-	    log('onTouchEnd', e);
-	    touchMoving = false;
-	
-	    delete simulation.debug.actionMoveType;
-	    delete simulation.debug.actionMoveDx;
-	    delete simulation.debug.actionMoveDy;
-	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-	  };
-	
 	  var onTouchMove = function onTouchMove(e) {
 	    if (!touchMoving) {
 	      if (e.touches.length == 1) {
@@ -32200,11 +32190,6 @@
 	
 	        return;
 	      }
-	    }
-	
-	    if (e.touches.length > 1) {
-	      onTouchEnd(e);
-	      return;
 	    }
 	
 	    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
@@ -35034,10 +35019,12 @@
 	
 	    if (e.touches.length == 1) {
 	      pinching = false;
-	      for (var i in (0, _keys2.default)(lastV)) {
-	        delete simulation.debug['actionZoom' + i];
+	      if (lastV) {
+	        for (var i in (0, _keys2.default)(lastV)) {
+	          delete simulation.debug['actionZoom' + i];
+	        }
+	        lastV = null;
 	      }
-	      lastV = null;
 	      delete simulation.debug.actionZoomType;
 	      return;
 	    }

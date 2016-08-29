@@ -85,10 +85,12 @@ module.exports = function(simulation, renderer) {
 
     if(e.touches.length == 1) {
       pinching = false;
-      for(var i in Object.keys(lastV)) {
-        delete simulation.debug['actionZoom'+i];
+      if(lastV) {
+        for(var i in Object.keys(lastV)) {
+          delete simulation.debug['actionZoom'+i];
+        }
+        lastV = null;
       }
-      lastV = null;
       delete simulation.debug.actionZoomType;
       return;
     }
