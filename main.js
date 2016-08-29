@@ -32172,17 +32172,6 @@
 	    renderer.pan(e.movementX, e.movementY);
 	  };
 	
-	  var onTouchMove = function onTouchMove(e) {
-	    if (!touchMoving) return;
-	    log('onTouchMove', e);
-	
-	    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
-	    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
-	    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
-	
-	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-	  };
-	
 	  var onTouchEnd = function onTouchEnd(e) {
 	    log('onTouchEnd', e);
 	    touchMoving = false;
@@ -32193,11 +32182,29 @@
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
 	  };
 	
+	  var onTouchMove = function onTouchMove(e) {
+	    if (!touchMoving) return;
+	    log('onTouchMove', e);
+	    if (e.touches.length > 1) {
+	      onTouchEnd(e);
+	      return;
+	    }
+	
+	    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
+	    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
+	    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
+	
+	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+	  };
+	
 	  var onTouchStart = function onTouchStart(e) {
 	    log('onPress', e);
 	    touchMoving = true;
 	    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-	    if (e.touches.length > 1) onTouchEnd(e);
+	    if (e.touches.length > 1) {
+	      onTouchEnd(e);
+	      return;
+	    }
 	
 	    simulation.debug.actionMoveType = "touch";
 	    simulation.debug.actionMoveDx = 0;
@@ -35017,20 +35024,23 @@
 	    }
 	  };
 	
-	  var onTouchStart = function onTouchStart(e) {
-	    if (e.touches.length != 2) return;
-	
-	    pinching = true;
-	
-	    var v = getPinchStats(e);
-	    renderer.updateCursor(v.centerX, v.centerY);
-	    lastV = v;
-	
-	    simulation.debug.actionZoomType = "touch";
-	  };
-	
 	  var onTouchMove = function onTouchMove(e) {
-	    if (!pinching) return;
+	    if (!pinching) {
+	      if (e.touches.length == 2) {
+	        pinching = true;
+	        lastV = getPinchStats(e);
+	      } else return;
+	    }
+	
+	    if (e.touches.length == 1) {
+	      pinching = false;
+	      for (var i in (0, _keys2.default)(lastV)) {
+	        delete simulation.debug['actionZoom' + i];
+	      }
+	      lastV = null;
+	      delete simulation.debug.actionZoomType;
+	      return;
+	    }
 	
 	    var v = getPinchStats(e);
 	
@@ -35040,34 +35050,17 @@
 	    lastV = v;
 	  };
 	
-	  var onTouchEnd = function onTouchEnd(e) {
-	    if (!pinching || e.touches.length > 1) return;
-	
-	    pinching = false;
-	    for (var i in (0, _keys2.default)(lastV)) {
-	      delete simulation.debug['actionZoom' + i];
-	    }
-	    lastV = null;
-	    delete simulation.debug.actionZoomType;
-	  };
-	
 	  this.activate = function () {
 	    if (active) return;
 	    renderer.view.addEventListener("wheel", onWheel);
-	    renderer.view.addEventListener("touchstart", onTouchStart);
 	    renderer.view.addEventListener("touchmove", onTouchMove);
-	    renderer.view.addEventListener("touchend", onTouchEnd);
-	    renderer.view.addEventListener("touchcancel", onTouchEnd);
 	    active = true;
 	  };
 	
 	  this.deactivate = function () {
 	    if (!active) return;
 	    renderer.view.removeEventListener("wheel", onWheel);
-	    renderer.view.removeEventListener("touchstart", onTouchStart);
 	    renderer.view.removeEventListener("touchmove", onTouchMove);
-	    renderer.view.removeEventListener("touchend", onTouchEnd);
-	    renderer.view.removeEventListener("touchcancel", onTouchEnd);
 	    active = false;
 	  };
 	

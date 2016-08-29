@@ -74,17 +74,6 @@ module.exports = function(simulation, renderer) {
     renderer.pan(e.movementX, e.movementY);
   }
 
-  var onTouchMove = function(e) {
-    if(!touchMoving) return;
-    log('onTouchMove', e);
-
-    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
-    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
-    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
-
-    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-  }
-
   var onTouchEnd = function(e) {
     log('onTouchEnd', e);
     touchMoving = false;
@@ -95,11 +84,29 @@ module.exports = function(simulation, renderer) {
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
   }
 
+  var onTouchMove = function(e) {
+    if(!touchMoving) return;
+    log('onTouchMove', e);
+    if(e.touches.length > 1) {
+      onTouchEnd(e);
+      return;
+    }
+
+    renderer.pan(e.touches[0].clientX - renderer.lastX, e.touches[0].clientY - renderer.lastY);
+    simulation.debug.actionMoveDx = e.touches[0].clientX - renderer.lastX;
+    simulation.debug.actionMoveDy = e.touches[0].clientY - renderer.lastY;
+
+    renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
+  }
+
   var onTouchStart = function(e) {
     log('onPress', e);
     touchMoving = true;
     renderer.updateCursor(e.touches[0].clientX, e.touches[0].clientY);
-    if(e.touches.length > 1) onTouchEnd(e);
+    if(e.touches.length > 1) {
+      onTouchEnd(e);
+      return;
+    }
 
     simulation.debug.actionMoveType="touch";
     simulation.debug.actionMoveDx = 0;

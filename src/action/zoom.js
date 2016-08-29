@@ -72,21 +72,24 @@ module.exports = function(simulation, renderer) {
     }
   }
 
-  var onTouchStart = function(e) {
-    if(e.touches.length != 2) return;
-
-    pinching = true;
-
-    var v = getPinchStats(e);
-    renderer.updateCursor(v.centerX, v.centerY);
-    lastV = v;
-
-    simulation.debug.actionZoomType = "touch";
-  }
-
   var onTouchMove = function(e) {
-    if(!pinching) return;
+    if(!pinching){
+      if(e.touches.length == 2) {
+        pinching = true;
+        lastV = getPinchStats(e);
+      } else return;
+    }
 
+    if(e.touches.length == 1) {
+      pinching = false;
+      for(var i in Object.keys(lastV)) {
+        delete simulation.debug['actionZoom'+i];
+      }
+      lastV = null;
+      delete simulation.debug.actionZoomType;
+      return;
+    }
+    
     var v = getPinchStats(e);
 
     renderer.updateCursor(v.centerX, v.centerY);
@@ -95,34 +98,17 @@ module.exports = function(simulation, renderer) {
     lastV = v;
   }
 
-  var onTouchEnd = function(e) {
-    if(!pinching || e.touches.length > 1) return;
-
-    pinching = false;
-    for(var i in Object.keys(lastV)) {
-      delete simulation.debug['actionZoom'+i];
-    }
-    lastV = null;
-    delete simulation.debug.actionZoomType;
-  }
-
   this.activate = function() {
     if(active) return;
     renderer.view.addEventListener("wheel", onWheel);
-    renderer.view.addEventListener("touchstart", onTouchStart);
     renderer.view.addEventListener("touchmove", onTouchMove);
-    renderer.view.addEventListener("touchend", onTouchEnd);
-    renderer.view.addEventListener("touchcancel", onTouchEnd);
     active = true;
   }
 
   this.deactivate = function() {
     if(!active) return;
     renderer.view.removeEventListener("wheel", onWheel);
-    renderer.view.removeEventListener("touchstart", onTouchStart);
     renderer.view.removeEventListener("touchmove", onTouchMove);
-    renderer.view.removeEventListener("touchend", onTouchEnd);
-    renderer.view.removeEventListener("touchcancel", onTouchEnd);
     active = false;
   }
 
