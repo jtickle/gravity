@@ -26,7 +26,8 @@ var Renderer = require('renderer');
 var Simulation = require('simulation');
 //var actionQueueFac = require('actionQueue.js').fac;
 var UI = require('ui');
-var NormalMode = require('mode/normal');
+//var NormalMode = require('mode/normal');
+var Input = require('input');
 
 var run = function() {
   // The Simulation
@@ -35,14 +36,18 @@ var run = function() {
   // The Renderer
   var renderer = new Renderer(0x000000, 'gravity', simulation.debug);
 
+  // The Input Handler
+  var input = new Input();
+  input.activate(renderer.view);
+
   // The UI
-  var ui = new UI('side', simulation, renderer);
+  var ui = new UI('side', simulation, renderer, input);
 
   // Previous frame time, updated per-frame by animate function
   var pt = 0;
 
   // Put simulation in Normal Mode
-  simulation.setMode(new NormalMode(simulation, renderer));
+  //simulation.setMode(new NormalMode(simulation, renderer));
 
   // Create Public API
   window.GRAVITY = {};
@@ -77,7 +82,7 @@ var run = function() {
     simulation.applyGravity(dt);
 
     // Let the Input Mode have a chance to change the state of the system
-    simulation.mode.mutate();
+    //simulation.mode.mutate();
     
     // Draw stars in new positions
     renderer.addNewStars(simulation.stars);
@@ -86,7 +91,7 @@ var run = function() {
     renderer.drawOverlay(simulation.selected);
 
     // Let the Input Mode draw on top of all that
-    simulation.mode.render();
+    //simulation.mode.render();
 
     // Update the React HTML UI
     ui.render();

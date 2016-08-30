@@ -25,9 +25,11 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var StarProps = require('component/StarProps');
-var DebugTable = require('component/DebugTable');
+//var DebugTable = require('component/DebugTable');
+var InputDebug = require('component/InputDebug');
 
-module.exports = function(sideid, simulation, renderer) {
+module.exports = function(sideid, simulation, renderer, input) {
+  console.log(input);
   this.render = function() {
     var csx = renderer.lastX;
     var csy = renderer.lastY;
@@ -37,7 +39,9 @@ module.exports = function(sideid, simulation, renderer) {
     ReactDOM.render(
       (<div>
         <StarProps selected={simulation.selected} />
-        <DebugTable debug={simulation.debug} />
+        <InputDebug keyboard={input.kbd}
+                    mouse={input.mouse}
+                    touch={input.touch} />
       </div>),
       document.getElementById(sideid));
   };
