@@ -1,9 +1,11 @@
 {
   "name": "gravity",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A simulation of Newtonian gravity",
   "main": "gravity.js",
   "scripts": {
+    "build": "./update-versions && ./node_modules/.bin/webpack",
+    "live": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
