@@ -81,7 +81,6 @@ module.exports = function(G0) {
     for(i = 0; i < cs.length; i+=2) {
       S1 = stars[cs[i]];
       S2 = stars[cs[i+1]];
-      //console.log("Merged", S1, S2);
       m = S1.m + S2.m;
       S1.dx = ((S1.dx * S1.m) + (S2.dx * S2.m)) / m;
       S1.dy = ((S1.dy * S1.m) + (S2.dy * S2.m)) / m;
@@ -161,7 +160,6 @@ module.exports = function(G0) {
   }
 
   this.setMode = function(mode) {
-    console.log(mode);
     if(_this.mode) {
       _this.mode.deactivate();
     }

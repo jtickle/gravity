@@ -1,6 +1,6 @@
 {
   "name": "gravity",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simulation of Newtonian gravity",
   "main": "Gravity.js",
   "scripts": {

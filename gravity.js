@@ -7975,25 +7975,40 @@
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 	
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
 	(function () {
 	    try {
-	        cachedSetTimeout = setTimeout;
-	    } catch (e) {
-	        cachedSetTimeout = function () {
-	            throw new Error('setTimeout is not defined');
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
 	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
 	    }
 	    try {
-	        cachedClearTimeout = clearTimeout;
-	    } catch (e) {
-	        cachedClearTimeout = function () {
-	            throw new Error('clearTimeout is not defined');
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
 	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
 	    }
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
 	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
 	        return setTimeout(fun, 0);
 	    }
 	    try {
@@ -8014,6 +8029,11 @@
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
 	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
 	        return clearTimeout(marker);
 	    }
 	    try {
@@ -8516,7 +8536,7 @@
 	    debug.rLastY = y;
 	  };
 	
-	  this.applyScaleFactor = function (factor) {
+	  this.zoom = function (factor) {
 	    var x = screenToX(_this.lastX);
 	    var y = screenToY(_this.lastY);
 	    var dx = (x - _this.centerX) / scale;
@@ -8527,7 +8547,6 @@
 	
 	  this.pan = function (dx, dy) {
 	    _this.setCenter(_this.centerX - dx * scale, _this.centerY - dy * scale);
-	    console.log(dx, dy, _this.centerX, _this.centerY);
 	  };
 	
 	  this.setCenter = function (x, y) {
@@ -8627,7 +8646,6 @@
 	    for (i = 0; i < cs.length; i += 2) {
 	      S1 = stars[cs[i]];
 	      S2 = stars[cs[i + 1]];
-	      //console.log("Merged", S1, S2);
 	      m = S1.m + S2.m;
 	      S1.dx = (S1.dx * S1.m + S2.dx * S2.m) / m;
 	      S1.dy = (S1.dy * S1.m + S2.dy * S2.m) / m;
@@ -8707,7 +8725,6 @@
 	  };
 	
 	  this.setMode = function (mode) {
-	    console.log(mode);
 	    if (_this.mode) {
 	      _this.mode.deactivate();
 	    }
@@ -31851,6 +31868,112 @@
 	        );
 	      }
 	
+	      var pinch = null;
+	      if (t.pinch) {
+	        pinch = React.createElement(
+	          "tbody",
+	          null,
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "px0"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.x0
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "px1"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.x1
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "py0"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.y0
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "py1"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.y1
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "pdx"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.dx
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "pdy"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.dy
+	            )
+	          ),
+	          React.createElement(
+	            "tr",
+	            null,
+	            React.createElement(
+	              "td",
+	              null,
+	              "pr"
+	            ),
+	            React.createElement(
+	              "td",
+	              null,
+	              t.pinch.r
+	            )
+	          )
+	        );
+	      }
+	
 	      var pb = function pb(b) {
 	        return b ? "ON" : "off";
 	      };
@@ -32046,6 +32169,7 @@
 	          )
 	        ),
 	        avg,
+	        pinch,
 	        (0, _keys2.default)(t.touches).map(function (v, i) {
 	          return React.createElement(
 	            "tbody",
@@ -32200,10 +32324,6 @@
 	
 	var _typeof3 = _interopRequireDefault(_typeof2);
 	
-	var _keys = __webpack_require__(564);
-	
-	var _keys2 = _interopRequireDefault(_keys);
-	
 	var _defineProperty2 = __webpack_require__(569);
 	
 	var _defineProperty3 = _interopRequireDefault(_defineProperty2);
@@ -32234,6 +32354,7 @@
 	
 	  this.touch = {
 	    touches: {},
+	    pinch: null,
 	    average: null
 	  };
 	
@@ -32264,14 +32385,13 @@
 	    updateKeyboardData(e);
 	  };
 	
-	  var moveViewport = function moveViewport(e, m) {
+	  var mouseMoveViewport = function mouseMoveViewport(e, m) {
 	    rq.q('pan', e.clientX - m.x, e.clientY - m.y);
 	  };
 	
 	  var onMouseDown = function onMouseDown(e) {
 	    var m = _this.mouse;
-	    if (m.l) {
-	      moveViewport(e, m);
+	    if (e.buttons & 1) {
 	      document.body.style.cursor = 'move';
 	    }
 	
@@ -32280,8 +32400,8 @@
 	
 	  var onMouseUp = function onMouseUp(e) {
 	    var m = _this.mouse;
-	    if (m.l) {
-	      moveViewport(e, m);
+	    if (e.buttons & 1) {
+	      mouseMoveViewport(e, m);
 	      document.body.style.cursor = 'default';
 	    }
 	
@@ -32291,27 +32411,24 @@
 	  var onMouseMove = function onMouseMove(e) {
 	    var m = _this.mouse;
 	    if (m.l) {
-	      moveViewport(e, m);
+	      mouseMoveViewport(e, m);
 	    }
 	
 	    updateMouseData(e);
+	    rq.q('updateCursor', e.clientX, e.clientY);
 	  };
 	
 	  var onWheel = function onWheel(e) {
 	    _this.mouse.w = e.deltaY;
 	    _this.mouse.m = e.deltaMode;
+	    rq.q('updateCursor', e.clientX, e.clientY);
+	    rq.q('zoom', e.deltaY / 1000);
 	  };
 	
 	  var updateTouchData = function updateTouchData(e) {
 	    e.preventDefault();
-	    var myT = _this.touch.touches;
+	    var myT = {};
 	    var evT = e.touches;
-	
-	    // Clear the touch list
-	    (0, _keys2.default)(myT).map(function (v, i) {
-	      delete myT[v];
-	    });
-	
 	    var avgX = 0;
 	    var avgY = 0;
 	    var cnt = 0;
@@ -32331,6 +32448,9 @@
 	      cnt++;
 	    }
 	
+	    _this.touch.touches = myT;
+	
+	    // Calculate average position
 	    if (!cnt) {
 	      _this.touch.average = null;
 	    } else {
@@ -32339,6 +32459,48 @@
 	        y: avgY / cnt
 	      };
 	    }
+	
+	    // Set Pinch Data, if available
+	    if (e.touches.length == 2) {
+	      var pinch = {};
+	      var swap;
+	
+	      pinch.x0 = e.touches[0].clientX;
+	      pinch.x1 = e.touches[1].clientX;
+	      pinch.y0 = e.touches[0].clientY;
+	      pinch.y1 = e.touches[1].clientY;
+	
+	      pinch.dx = Math.abs(pinch.x0 - pinch.x1) / 2;
+	      pinch.dy = Math.abs(pinch.y0 - pinch.y1) / 2;
+	
+	      pinch.r = Math.sqrt(pinch.dx * pinch.dx + pinch.dy * pinch.dy);
+	
+	      _this.touch.pinch = pinch;
+	    } else {
+	      _this.touch.pinch = null;
+	    }
+	  };
+	
+	  var onTouchStart = function onTouchStart(e) {
+	    e.preventDefault();
+	    updateTouchData(e);
+	  };
+	
+	  var onTouchMove = function onTouchMove(e) {
+	    e.preventDefault();
+	    var pp = _this.touch.pinch;
+	    var pa = _this.touch.average;
+	    updateTouchData(e);
+	    var np = _this.touch.pinch;
+	    var na = _this.touch.average;
+	
+	    if (e.touches.length > 0) {
+	      rq.q('updateCursor', na.x, na.y);
+	      if (e.touches.length > 1) {
+	        rq.q('zoom', (np.r - pp.r) / -100);
+	      }
+	      rq.q('pan', na.x - pa.x, na.y - pa.y);
+	    }
 	  };
 	
 	  var doListeners = function doListeners(fn) {
@@ -32346,10 +32508,10 @@
 	    fn("mouseup", onMouseUp);
 	    fn("mousemove", onMouseMove);
 	    fn("wheel", onWheel);
-	    fn("touchstart", updateTouchData);
-	    fn("touchmove", updateTouchData);
-	    fn("touchend", updateTouchData);
-	    fn("touchcancel", updateTouchData);
+	    fn("touchstart", onTouchStart);
+	    fn("touchmove", onTouchMove);
+	    fn("touchend", onTouchMove);
+	    fn("touchcancel", onTouchMove);
 	  };
 	
 	  this.activate = function (el) {
