@@ -131,7 +131,7 @@ module.exports = function(bgColor, canvasId, debug) {
     }
   }
 
-  this.addNewStars = function(stars) {
+  this.drawStars = function(stars) {
     for(var i = 0; i < stars.length; i++) {
       drawStar(stars[i])
       ctx.fillStyle = '#FFFF66';

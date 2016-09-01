@@ -22,11 +22,11 @@
  */
 "use strict";
 
-var Renderer = require('renderer');
-var Simulation = require('simulation');
-var UI = require('ui');
-var ActionQueue = require('actionQueue');
-var Input = require('input');
+var Renderer = require('Renderer');
+var Simulation = require('Simulation');
+var UI = require('UI');
+var ActionQueue = require('ActionQueue');
+var Input = require('Input');
 
 var run = function() {
   // The Simulation
@@ -46,9 +46,6 @@ var run = function() {
 
   // Previous frame time, updated per-frame by animate function
   var pt = 0;
-
-  // Put simulation in Normal Mode
-  //simulation.setMode(new NormalMode(simulation, renderer));
 
   // Create Public API
   window.GRAVITY = {};
@@ -117,7 +114,6 @@ var run = function() {
     // frame here because we would like to keep star-trails around,
     // which cannot be re-calculated due to the chaotic nature of this
     // simulation.
-    //renderer.removeOldStars(simulation.stars);
     renderer.blank();
     
     // Apply Gravity (note: this will remove stars that have collided)
@@ -130,7 +126,7 @@ var run = function() {
     
     // Draw stars in new positions
     time.begin();
-    renderer.addNewStars(simulation.stars);
+    renderer.drawStars(simulation.stars);
     stats.dt.s += time.end();
 
     // Draw Overlay - non-HTMl UI elements

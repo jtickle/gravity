@@ -2,7 +2,7 @@
   "name": "gravity",
   "version": "0.1.0",
   "description": "A simulation of Newtonian gravity",
-  "main": "gravity.js",
+  "main": "Gravity.js",
   "scripts": {
     "build": "./update-versions && ./node_modules/.bin/webpack",
     "live": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0",

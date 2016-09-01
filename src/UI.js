@@ -25,7 +25,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var StarProps = require('component/StarProps');
-//var DebugTable = require('component/DebugTable');
 var InputDebug = require('component/InputDebug');
 
 module.exports = function(sideid, simulation, renderer, input) {

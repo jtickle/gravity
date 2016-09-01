@@ -6,11 +6,11 @@ console.log(__dirname);
 module.exports = {
   entry: [
     'babel-polyfill',
-    './src/gravity',
+    './src/Gravity',
   ],
   output: {
     publicPath: '/',
-    filename: 'main.js',
+    filename: 'gravity.js',
   },
   devtool: 'source-map',
   resolve: {

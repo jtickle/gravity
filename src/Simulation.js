@@ -22,7 +22,7 @@
  */
 "use strict";
 
-var Star = require('object/star');
+var Star = require('object/Star');
 
 var starid = 0;
 
