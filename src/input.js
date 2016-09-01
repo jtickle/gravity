@@ -22,15 +22,17 @@
  */
 "use strict";
 
-module.exports = function() {
+module.exports = function(sq, rq) {
   var _this = this;
   var active = false;
 
   this.kbd = {
-    shift: false,
-    alt: false,
-    ctrl: false
-  }
+    mod: {
+      shift: false,
+      alt: false,
+      ctrl: false
+    }
+  };
 
   this.mouse = {
     x: 0,
@@ -40,6 +42,8 @@ module.exports = function() {
     l: false,
     m: false,
     r: false,
+    a: false,
+    b: false
   };
 
   this.touch = {
@@ -47,31 +51,70 @@ module.exports = function() {
     average: null
   };
 
-  var setButton = function(num, state) {
-    switch(num) {
-      case 0: _this.mouse.l = state; break;
-      case 1: _this.mouse.m = state; break;
-      case 2: _this.mouse.r = state; break;
-    }
+  var updateKeyboardData = function(e) {
+    var k = _this.kbd.mod;
+    k.alt       = e.getModifierState('Alt');
+    k.altgraph  = e.getModifierState('AltGraph');
+    k.capslock  = e.getModifierState('CapsLock');
+    k.control   = e.getModifierState('Control');
+    k.fn        = e.getModifierState('Fn');
+    k.meta      = e.getModifierState('Meta');
+    k.NumLock   = e.getModifierState('NumLock');
+    k.os        = e.getModifierState('OS');
+    k.scolllock = e.getModifierState('ScrollLock');
+    k.shift     = e.getModifierState('Shift');
+  }
+
+  var updateMouseData = function(e) {
+    var m = _this.mouse;
+
+    m.x = e.clientX;
+    m.y = e.clientY;
+    m.l = !!(e.buttons & 1);
+    m.m = !!(e.buttons & 4);
+    m.r = !!(e.buttons & 2);
+    m.a = !!(e.buttons & 8);
+    m.b = !!(e.buttons & 16);
+    updateKeyboardData(e);
+  }
+
+  var moveViewport = function(e, m) {
+    rq.q('pan', e.clientX - m.x, e.clientY - m.y);
   }
 
   var onMouseDown = function(e) {
-    setButton(e.button, true);
+    var m = _this.mouse;
+    if(m.l) {
+      moveViewport(e, m);
+      document.body.style.cursor = 'move';
+    }
+
+    updateMouseData(e);
   }
 
   var onMouseUp = function(e) {
-    setButton(e.button, false);
+    var m = _this.mouse;
+    if(m.l) {
+      moveViewport(e, m);
+      document.body.style.cursor = 'default';
+    }
+
+    updateMouseData(e);
   }
 
   var onMouseMove = function(e) {
-    _this.mouse.x = e.clientX;
-    _this.mouse.y = e.clientY;
+    var m = _this.mouse;
+    if(m.l) {
+      moveViewport(e, m);
+    }
+
+    updateMouseData(e);
   }
 
   var onWheel = function(e) {
     _this.mouse.w = e.deltaY;
     _this.mouse.m = e.deltaMode;
-  }
+  };
 
   var updateTouchData = function(e) {
     e.preventDefault();
@@ -110,27 +153,24 @@ module.exports = function() {
         y: avgY / cnt
       };
     }
-  }
+  };
+
+  var doListeners = function(fn) {
+    fn("mousedown",   onMouseDown);
+    fn("mouseup",     onMouseUp);
+    fn("mousemove",   onMouseMove);
+    fn("wheel",       onWheel);
+    fn("touchstart",  updateTouchData);
+    fn("touchmove",   updateTouchData);
+    fn("touchend",    updateTouchData);
+    fn("touchcancel", updateTouchData);
+  };
 
   this.activate = function(el) {
-    el.addEventListener("mousedown", onMouseDown);
-    el.addEventListener("mouseup", onMouseUp);
-    el.addEventListener("mousemove", onMouseMove);
-    el.addEventListener("wheel", onWheel);
-    el.addEventListener("touchstart", updateTouchData);
-    el.addEventListener("touchmove", updateTouchData);
-    el.addEventListener("touchend", updateTouchData);
-    el.addEventListener("touchcancel", updateTouchData);
-  }
+    doListeners(el.addEventListener);
+  };
 
   this.deactivate = function(el) {
-    el.removeEventListener("mousedown", onMouseDown);
-    el.removeEventListener("mouseup", onMouseUp);
-    el.removeEventListener("mousemove", onMouseMove);
-    el.removeEventListener("wheel", onWheel);
-    el.removeEventListener("touchstart", updateTouchData);
-    el.removeEventListener("touchmove", updateTouchData);
-    el.removeEventListener("touchend", updateTouchData);
-    el.removeEventListener("touchcancel", updateTouchData);
-  }
+    doListeners(el.removeEventListener);
+  };
 }

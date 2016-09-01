@@ -55,15 +55,15 @@ class InputDebug extends React.Component {
         <tbody>
           <tr>
             <td>Shift</td>
-            <td>{pb(k.shift)}</td>
+            <td>{pb(k.mod.shift)}</td>
           </tr>
           <tr>
             <td>Alt</td>
-            <td>{pb(k.alt)}</td>
+            <td>{pb(k.mod.alt)}</td>
           </tr>
           <tr>
             <td>Ctrl</td>
-            <td>{pb(k.ctrl)}</td>
+            <td>{pb(k.mod.ctrl)}</td>
           </tr>
         </tbody>
         <thead>

@@ -22,31 +22,23 @@
  */
 "use strict";
 
-module.exports = {
-  fac: function(simulation) {
-    var listeners = {};
-    var actionQueue = [];
+module.exports = function(target) {
+  var actionQueue = [];
 
-    this.listener = function(evt) {
-      return function() {
-        var action = Array.prototype.slice.call(arguments, 0);
-        action.unshift(evt);
-        actionQueue.push(action);
+  this.q = function() {
+    var action = Array.prototype.slice.call(arguments, 0);
+    actionQueue.push(action);
+  }
 
-        console.log(actionQueue);
+  this.process = function() {
+    while(actionQueue.length > 0) {
+      var next = actionQueue.shift();
+      var method = next.shift();
+      if(typeof(target[method]) == 'undefined') {
+        throw "Requested handler is undefined: " + next;
       }
-    }
 
-    this.flushQueue = function(target) {
-      while(actionQueue.length > 0) {
-        var next = actionQueue.shift();
-        var method = next.shift();
-        if(typeof(target[method]) == 'undefined') {
-          throw "Requested handler is undefined: " + next;
-        }
-
-        target[method].apply(next);
-      }
+      target[method].apply(target, next);
     }
   }
 }

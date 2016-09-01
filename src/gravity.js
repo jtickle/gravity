@@ -24,20 +24,21 @@
 
 var Renderer = require('renderer');
 var Simulation = require('simulation');
-//var actionQueueFac = require('actionQueue.js').fac;
 var UI = require('ui');
-//var NormalMode = require('mode/normal');
+var ActionQueue = require('actionQueue');
 var Input = require('input');
 
 var run = function() {
   // The Simulation
   var simulation = new Simulation(1);
+  var sq = new ActionQueue(simulation);
 
   // The Renderer
   var renderer = new Renderer(0x000000, 'gravity', simulation.debug);
+  var rq = new ActionQueue(renderer);
 
   // The Input Handler
-  var input = new Input();
+  var input = new Input(sq, rq);
   input.activate(renderer.view);
 
   // The UI
@@ -63,7 +64,7 @@ var run = function() {
       u: 0,
       t: 0
     }
-  }
+  };
 
   var timers = [];
 
@@ -125,7 +126,7 @@ var run = function() {
     stats.dt.g += time.end();
 
     // Let the Input Mode have a chance to change the state of the system
-    //simulation.mode.mutate();
+    rq.process()
     
     // Draw stars in new positions
     time.begin();
@@ -138,7 +139,6 @@ var run = function() {
     stats.dt.o += time.end();
 
     // Let the Input Mode draw on top of all that
-    //simulation.mode.render();
 
     // Update the React HTML UI
     time.begin();
