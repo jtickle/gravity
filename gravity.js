@@ -8289,7 +8289,7 @@
 	
 	    // Draw stars in new positions
 	    time.begin();
-	    renderer.draw(simulation.stars);
+	    renderer.drawStars(simulation.stars);
 	    stats.dt.s += time.end();
 	
 	    // Draw Overlay - non-HTMl UI elements
