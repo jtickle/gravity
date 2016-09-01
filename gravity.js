@@ -8361,9 +8361,9 @@
 	
 	  // Generate a bunch of random stars
 	  for (var i = 0; i < 500; i++) {
-	    var radius = Math.random() * 750;
+	    var radius = Math.random() * 400 + 100;
 	    var theta = Math.random() * 2 * Math.PI;
-	    var magnit = radius / 10;
+	    var magnit = 50;
 	    var direc = theta - 90;
 	
 	    window.GRAVITY.addStar(radius * Math.cos(theta), radius * Math.sin(theta), magnit * Math.cos(direc), magnit * Math.sin(direc), Math.random() * 90 + 10);
@@ -8646,6 +8646,7 @@
 	    for (i = 0; i < cs.length; i += 2) {
 	      S1 = stars[cs[i]];
 	      S2 = stars[cs[i + 1]];
+	      //console.log("Merged", S1, S2);
 	      m = S1.m + S2.m;
 	      S1.dx = (S1.dx * S1.m + S2.dx * S2.m) / m;
 	      S1.dy = (S1.dy * S1.m + S2.dy * S2.m) / m;
@@ -8725,6 +8726,7 @@
 	  };
 	
 	  this.setMode = function (mode) {
+	    console.log(mode);
 	    if (_this.mode) {
 	      _this.mode.deactivate();
 	    }
@@ -32400,10 +32402,8 @@
 	
 	  var onMouseUp = function onMouseUp(e) {
 	    var m = _this.mouse;
-	    if (e.buttons & 1) {
-	      mouseMoveViewport(e, m);
-	      document.body.style.cursor = 'default';
-	    }
+	    mouseMoveViewport(e, m);
+	    document.body.style.cursor = 'default';
 	
 	    updateMouseData(e);
 	  };
