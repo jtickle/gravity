@@ -178,9 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Generate a bunch of random stars
   for(var i = 0; i < 500; i++) {
-    var radius = Math.random() * 750;
+    var radius = Math.random() * 400 + 100;
     var theta  = Math.random() * 2 * Math.PI;
-    var magnit = radius / 10;
+    var magnit = 50;
     var direc  = theta - 90;
 
     window.GRAVITY.addStar(radius * Math.cos(theta),

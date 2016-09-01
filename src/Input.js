@@ -94,10 +94,8 @@ module.exports = function(sq, rq) {
 
   var onMouseUp = function(e) {
     var m = _this.mouse;
-    if(e.buttons & 1) {
-      mouseMoveViewport(e, m);
-      document.body.style.cursor = 'default';
-    }
+    mouseMoveViewport(e, m);
+    document.body.style.cursor = 'default';
 
     updateMouseData(e);
   }
