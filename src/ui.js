@@ -29,7 +29,6 @@ var StarProps = require('component/StarProps');
 var InputDebug = require('component/InputDebug');
 
 module.exports = function(sideid, simulation, renderer, input) {
-  console.log(input);
   this.render = function() {
     var csx = renderer.lastX;
     var csy = renderer.lastY;

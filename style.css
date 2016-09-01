@@ -19,6 +19,24 @@ p.copyleft, p.copyleft a {
   color: #669;
 }
 
+#stats {
+  position: absolute;
+  width: 75px;
+  top: 0;
+  right: 0;
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+  font-size: 8pt;
+  color: #0F0;
+}
+
+#stats p {
+  margin: 0.25em;
+  padding: 0.25em;
+  border-bottom: solid 1px #060;
+}
+
 canvas {
   position: absolute;
   top: 0;

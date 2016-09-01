@@ -52,6 +52,44 @@ var run = function() {
   // Create Public API
   window.GRAVITY = {};
 
+  var stats = {
+    cursec: 0,
+    count: 0,
+    dt: {
+      f: 0,
+      g: 0,
+      s: 0,
+      o: 0,
+      u: 0,
+      t: 0
+    }
+  }
+
+  var timers = [];
+
+  var time = {
+    begin: function() {
+      timers.push(Date.now());
+    },
+    end: function() {
+      var now = Date.now();
+      var then = timers.pop();
+      return (now - then) / 1000;
+    }
+  };
+
+  var floor5 = function(n) {
+    return Math.floor(n * 1000) / 1000;
+  }
+
+  var justshowstat = function(id, n) {
+    document.getElementById(id).textContent = n;
+  }
+
+  var showstat = function(id, n, count) {
+    justshowstat(id, floor5(n / count));
+  }
+
   // Adds a star to the simulation
   GRAVITY.addStar = function(x, y, dx, dy, m) {
     simulation.addStar(x, y, dx, dy, m);
@@ -62,6 +100,9 @@ var run = function() {
     
     // Delta-Time in Seconds since Last Frame
     var dt = (ct - pt) / 1000;
+
+    time.begin();
+    stats.dt.f += floor5(dt);
     
     // Request to call myself at next frame
     requestAnimationFrame(animate);
@@ -79,25 +120,57 @@ var run = function() {
     renderer.blank();
     
     // Apply Gravity (note: this will remove stars that have collided)
+    time.begin();
     simulation.applyGravity(dt);
+    stats.dt.g += time.end();
 
     // Let the Input Mode have a chance to change the state of the system
     //simulation.mode.mutate();
     
     // Draw stars in new positions
+    time.begin();
     renderer.addNewStars(simulation.stars);
+    stats.dt.s += time.end();
 
     // Draw Overlay - non-HTMl UI elements
+    time.begin();
     renderer.drawOverlay(simulation.selected);
+    stats.dt.o += time.end();
 
     // Let the Input Mode draw on top of all that
     //simulation.mode.render();
 
     // Update the React HTML UI
+    time.begin();
     ui.render();
+    stats.dt.u += time.end();
 
+    // Calculate FPS
+    stats.count++;
+    var sec = Math.floor(ct/1000);
+    if(sec != stats.cursec) {
+      // Display Stats once a second
+      justshowstat('stats-fps', stats.count);
+      showstat('stats-dt-f', stats.dt.f, stats.count);
+      showstat('stats-dt-g', stats.dt.g, stats.count);
+      showstat('stats-dt-s', stats.dt.s, stats.count);
+      showstat('stats-dt-o', stats.dt.o, stats.count);
+      showstat('stats-dt-u', stats.dt.u, stats.count);
+      showstat('stats-dt-t', stats.dt.t, stats.count);
+      stats.cursec = sec;
+      stats.count = 0;
+      stats.dt.f = 0;
+      stats.dt.g = 0;
+      stats.dt.s = 0;
+      stats.dt.o = 0;
+      stats.dt.u = 0;
+      stats.dt.t = 0;
+    }
     // Advance Previous Time
     pt = ct;
+
+    stats.dt.t += time.end();
+    timers.length = 0;
   }
   
   animate(0);
@@ -114,53 +187,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var magnit = radius / 10;
     var direc  = theta - 90;
 
-    console.log(Math.log(radius));
-
     window.GRAVITY.addStar(radius * Math.cos(theta),
                     radius * Math.sin(theta),
                     magnit * Math.cos(direc),
                     magnit * Math.sin(direc),
                     Math.random() * 90 + 10);
   }
-
-  /*
-  GRAVITY.addStar(   0, 0, 10,   0, 1000);
-  GRAVITY.addStar(  50, 0,  0,  25, 1000);
-  GRAVITY.addStar( -50, 0,  0, -25, 1000);
-  GRAVITY.addStar( 100, 0,  0,  50, 1000);
-  GRAVITY.addStar(-100, 0,  0, -50, 1000);
-  GRAVITY.addStar(  10,20, 10,  65, 100);*/
-
-  /* Features:
-     + Simulation Control
-       + Forward
-       + Pause
-       + Reverse
-       + Multiple Speeds for each (enter s/s rate?)
-     + Query
-       + Show values for closest star to cursor
-       + Click to lock to a star, click again to unlock
-     + Select Elliptical Region (shift for circle)
-     + Select Rectangular Region (shift for square)
-     + Add Single
-       + Mass
-       + Position [or mouse click]
-       + Momentum [or mouse drag]
-     + Add Multiple (like add Galaxy)
-       + Per-star (no mouse entry): Mass
-       + Overall:
-         + outer angular momentum
-         + inner angular momentum
-         + star density
-         + radius
-         + center position [or mouse click]
-         + momentum over all stars [or mouse drag] */
-
-  /* Star Object:
-     { x:  X-axis position in graphic
-       y:  Y-axis position in graphic
-       dx: Change in X per second
-       dy: Change in Y per second
-       m:  Mass
-       r:  Radius } */
 });

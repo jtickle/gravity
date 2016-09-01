@@ -47,6 +47,14 @@ Here are the implemented features:
       dragging, shift+dragging, or touch-hold-dragging.
       Zoom in and out by scrolling the mouse wheel, or two-finger
       touch dragging.
+  * Statistics / Benchmarking
+    * Frames Per Second Display
+    * Average per-frame processing times for the various computations
+      * dT-G - Gravity Calculation
+      * dT-S - Drawing Stars
+      * dT-O - Drawing Overlay
+      * dT-U - DOM UI Update (React updates every frame)
+      * dT-T - Total time spent computing the frame
 * Query
   * Maintain 'Selected Stars' list within Simulation
   * Display list of 'Selected Stars' attributes in the Sidebar
