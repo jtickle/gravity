@@ -43,6 +43,39 @@ class InputDebug extends React.Component {
         </tr>
       </tbody>);}
 
+    var pinch = null;
+    if(t.pinch) { pinch = (
+      <tbody>
+        <tr>
+          <td>px0</td>
+          <td>{t.pinch.x0}</td>
+        </tr>
+        <tr>
+          <td>px1</td>
+          <td>{t.pinch.x1}</td>
+        </tr>
+        <tr>
+          <td>py0</td>
+          <td>{t.pinch.y0}</td>
+        </tr>
+        <tr>
+          <td>py1</td>
+          <td>{t.pinch.y1}</td>
+        </tr>
+        <tr>
+          <td>pdx</td>
+          <td>{t.pinch.dx}</td>
+        </tr>
+        <tr>
+          <td>pdy</td>
+          <td>{t.pinch.dy}</td>
+        </tr>
+        <tr>
+          <td>pr</td>
+          <td>{t.pinch.r}</td>
+          </tr>
+      </tbody>);}
+
     var pb = function(b) { return b ? "ON" : "off"; }
 
     return (
@@ -107,6 +140,7 @@ class InputDebug extends React.Component {
           </tr>
         </thead>
         {avg}
+        {pinch}
         {Object.keys(t.touches).map(function(v, i) {
           return (
             <tbody id={i}>

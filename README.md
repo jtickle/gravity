@@ -43,10 +43,9 @@ Here are the implemented features:
     * Marking selected objects
   * Simulation Canvas
     * Display all stars in the system with sizes logarithmic to mass
-    * Move the screen around the simulation by holding rightmouse and
-      dragging, shift+dragging, or touch-hold-dragging.
-      Zoom in and out by scrolling the mouse wheel, or two-finger
-      touch dragging.
+    * Move the screen around the simulation by clicking and dragging
+      or by touch-dragging
+      Zoom in and out by scrolling the mouse wheel, or pinch gesture
   * Statistics / Benchmarking
     * Frames Per Second Display
     * Average per-frame processing times for the various computations
@@ -64,9 +63,6 @@ Here are the implemented features:
 
 Here are the planned features:
 
-* GUI
-  * Simulation Canvas
-    * Zoom in and out
 * Query
   * Better interface for mobile devices
   * Select Elliptical Region (shift for circle)

@@ -160,7 +160,7 @@ module.exports = function(bgColor, canvasId, debug) {
     debug.rLastY = y;
   }
 
-  this.applyScaleFactor = function(factor) {
+  this.zoom = function(factor) {
     var x = screenToX(_this.lastX);
     var y = screenToY(_this.lastY);
     var dx = (x - _this.centerX) / scale;
@@ -173,7 +173,6 @@ module.exports = function(bgColor, canvasId, debug) {
   this.pan = function(dx, dy) {
     _this.setCenter(_this.centerX - dx * scale,
                     _this.centerY - dy * scale);
-    console.log(dx, dy, _this.centerX, _this.centerY);
   }
 
   this.setCenter = function(x, y) {
