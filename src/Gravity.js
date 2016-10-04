@@ -22,11 +22,13 @@
  */
 "use strict";
 
-var Renderer = require('Renderer');
-var Simulation = require('Simulation');
-var UI = require('UI');
-var ActionQueue = require('ActionQueue');
-var Input = require('Input');
+import Renderer from 'Renderer';
+import Simulation from 'Simulation';
+import UI from 'UI';
+import ActionQueue from 'ActionQueue';
+import Input from 'Input';
+
+import { createStore } from 'redux';
 
 var run = function() {
   // The Simulation
@@ -112,74 +114,82 @@ var run = function() {
     time.begin();
     stats.dt.f += floor5(dt);
     
-    // Request to call myself at next frame
-    requestAnimationFrame(animate);
-    
     // Don't do any actual simulation unless time has moved.  Saves us
     // some later division by zero problems, and is only a problem in
     // the first couple of frames.
-    if (dt <= 0) return;
-    
-    // Black-out the old stars; NOTE: we are not clearing the whole
-    // frame here because we would like to keep star-trails around,
-    // which cannot be re-calculated due to the chaotic nature of this
-    // simulation.
-    renderer.blank();
-    
-    // Apply Gravity (note: this will remove stars that have collided)
-    time.begin();
-    simulation.applyGravity(dt);
-    stats.dt.g += time.end();
+    if (dt > 0) {
+      try {
+      
+        // Black-out the old stars; NOTE: we are not clearing the whole
+        // frame here because we would like to keep star-trails around,
+        // which cannot be re-calculated due to the chaotic nature of this
+        // simulation.
+        renderer.blank();
+        
+        // Apply Gravity (note: this will remove stars that have collided)
+        time.begin();
+        simulation.applyGravity(dt);
+        stats.dt.g += time.end();
 
-    // Let the Input Mode have a chance to change the state of the system
-    rq.process()
-    
-    // Draw stars in new positions
-    time.begin();
-    renderer.drawStars(simulation.stars);
-    stats.dt.s += time.end();
+        // Let the Input Mode have a chance to change the state of the system
+        rq.process()
+        
+        // Draw stars in new positions
+        time.begin();
+        renderer.drawStars(simulation.stars);
+        stats.dt.s += time.end();
 
-    // Draw Overlay - non-HTMl UI elements
-    time.begin();
-    renderer.drawOverlay(simulation.selected);
-    stats.dt.o += time.end();
+        // Draw Overlay - non-HTMl UI elements
+        time.begin();
+        renderer.drawOverlay(simulation.selected);
+        stats.dt.o += time.end();
 
-    // Let the Input Mode draw on top of all that
+        // Let the Input Mode draw on top of all that
 
-    // Update the React HTML UI
-    time.begin();
-    ui.render();
-    stats.dt.u += time.end();
+        // Update the React HTML UI
+        time.begin();
+        ui.render();
+        stats.dt.u += time.end();
 
-    // Calculate FPS
-    stats.count++;
-    var sec = Math.floor(ct/1000);
-    if(sec != stats.cursec) {
-      // Display Stats once a second
-      justshowstat('fps', stats.count);
-      showstat('dt_f', stats.dt.f, stats.count);
-      showstat('dt_g', stats.dt.g, stats.count);
-      showstat('dt_s', stats.dt.s, stats.count);
-      showstat('dt_o', stats.dt.o, stats.count);
-      showstat('dt_u', stats.dt.u, stats.count);
-      showstat('dt_t', stats.dt.t, stats.count);
-      stats.cursec = sec;
-      stats.count = 0;
-      stats.dt.f = 0;
-      stats.dt.g = 0;
-      stats.dt.s = 0;
-      stats.dt.o = 0;
-      stats.dt.u = 0;
-      stats.dt.t = 0;
+        // Calculate FPS
+        stats.count++;
+        var sec = Math.floor(ct/1000);
+        if(sec != stats.cursec) {
+          // Display Stats once a second
+          justshowstat('fps', stats.count);
+          showstat('dt_f', stats.dt.f, stats.count);
+          showstat('dt_g', stats.dt.g, stats.count);
+          showstat('dt_s', stats.dt.s, stats.count);
+          showstat('dt_o', stats.dt.o, stats.count);
+          showstat('dt_u', stats.dt.u, stats.count);
+          showstat('dt_t', stats.dt.t, stats.count);
+          ui.update();
+          console.log(renderer.getStarCache());
+          stats.cursec = sec;
+          stats.count = 0;
+          stats.dt.f = 0;
+          stats.dt.g = 0;
+          stats.dt.s = 0;
+          stats.dt.o = 0;
+          stats.dt.u = 0;
+          stats.dt.t = 0;
+        }
+        // Advance Previous Time
+        pt = ct;
+
+        stats.dt.t += time.end();
+        timers.length = 0;
+
+      } catch(e) {
+        console.log('Caught exception, requesting next frame anyway... ', e);
+      }
     }
-    // Advance Previous Time
-    pt = ct;
 
-    stats.dt.t += time.end();
-    timers.length = 0;
+    // Request to call myself at next frame
+    requestAnimationFrame(animate);
   }
   
-  animate(0);
+  requestAnimationFrame(animate);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -187,10 +197,10 @@ document.addEventListener('DOMContentLoaded', function() {
   run();
 
   // Generate a bunch of random stars
-  for(var i = 0; i < 500; i++) {
-    var radius = Math.random() * 400 + 100;
+  for(var i = 0; i < 300; i++) {
+    var radius = Math.random() * 350 + 50;
     var theta  = Math.random() * 2 * Math.PI;
-    var magnit = 50;
+    var magnit = radius / 20;
     var direc  = theta - 90;
 
     window.GRAVITY.addStar(radius * Math.cos(theta),

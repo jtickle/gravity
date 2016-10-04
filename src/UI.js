@@ -29,7 +29,15 @@ var InputDebug = require('component/InputDebug');
 var SinglePointTools = require('component/SinglePointTools');
 
 module.exports = function(sideid, simulation, renderer, input) {
+  this.needsUpdate = false;
+
+  this.update = function() {
+    this.needsUpdate = true;
+  }
+
   this.render = function() {
+    if(!this.needsUpdate) return;
+
     var csx = renderer.lastX;
     var csy = renderer.lastY;
     var cwx = renderer.screenToX(csx);
@@ -45,5 +53,7 @@ module.exports = function(sideid, simulation, renderer, input) {
         <InputDebug input={input} />
       </div>),
       document.getElementById(sideid));
+
+    this.needsUpdate = false;
   };
 }

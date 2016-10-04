@@ -47,8 +47,6 @@ class SinglePointTools extends React.Component {
       _this.props.onChangeActive('InsertOne');
     }
 
-    console.log(this.props);
-
     return (
       <div className="tools">
         <div className="tools-selector">

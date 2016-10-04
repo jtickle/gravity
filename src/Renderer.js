@@ -36,6 +36,9 @@ module.exports = function(bgColor, canvasId, debug) {
 
   // The computed scale setting Math.pow(Math.E, scaleBase)
   var scale = 1;
+
+  // Cache of rendered stars
+  var starCache = [];
     
   var view = document.getElementById(canvasId);
   var ctx = view.getContext('2d');
@@ -116,26 +119,58 @@ module.exports = function(bgColor, canvasId, debug) {
     return height;
   }
 
-  var drawStar = function(star, r) {
-    if(typeof(r) == 'undefined') r = star.r;
-    ctx.beginPath();
-    ctx.arc(XToScreen(star.x), YToScreen(star.y), r / scale, 0, 2*Math.PI);
-    ctx.closePath();
-  }
-  
-  this.removeOldStars = function(stars) {
-    for(var i = 0; i < stars.length; i++) {
-      drawStar(stars[i], stars[i].r + 1);
-      ctx.fillStyle = '#000000';
-      ctx.fill();
+  var getStarCanvas = function(r) {
+    if(!starCache[r]) {
+      var s = document.createElement('canvas');
+      if(r > 1) {
+        s.width = (r*2)+2;
+        s.height = (r*2)+2;
+      } else {
+        s.width = 3;
+        s.height = 3;
+      }
+
+      var c = s.getContext('2d');
+      if(r > 1) {
+        c.beginPath();
+        c.arc(r + 1, r + 1, r, 0, 2*Math.PI);
+        c.closePath();
+        c.fillStyle = '#FFFF66';
+        c.fill();
+      } else {
+        c.fillStyle = 'rgb(' + Math.floor(255 * r) + ',' +
+                               Math.floor(255 * r) + ',' +
+                               Math.floor(96 * r) + ')';
+        c.fillRect(1, 1, 1, 1);
+      }
+
+      starCache[r] = s;
     }
+
+    return starCache[r];
   }
 
+  this.getStarCache = function() {
+    return starCache;
+  }
+
+  var drawStar = function(star) {
+    var r = star.r / scale;
+    var sc = 10;
+    if(r <= 1) {
+      sc = 255;
+    }
+
+    r = Math.floor(r * sc) / sc;
+
+    var c = getStarCanvas(r);
+
+    ctx.drawImage(c, XToScreen(star.x) - r, YToScreen(star.y) - r);
+  }
+  
   this.drawStars = function(stars) {
     for(var i = 0; i < stars.length; i++) {
       drawStar(stars[i])
-      ctx.fillStyle = '#FFFF66';
-      ctx.fill();
     }
   }
 

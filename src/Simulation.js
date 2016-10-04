@@ -66,8 +66,7 @@ module.exports = function(G0) {
     // now.  Something to try later:
     // http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
     
-    r = Math.sqrt(r2);
-    return r <= (S1.r + S2.r);
+    return r2 <= Math.floor(S1.r*S1.r + S2.r*S2.r);
   }
   
   // All of this collision code makes the wild assumption that no more
@@ -76,21 +75,30 @@ module.exports = function(G0) {
   // with more than one other star in the frame, this whole thing will
   // crash because of the screwed up array indexes.
   var mergeStars = function(stars, cs) {
-    var i, S1, S2, m;
-    
-    for(i = 0; i < cs.length; i+=2) {
-      S1 = stars[cs[i]];
-      S2 = stars[cs[i+1]];
-      m = S1.m + S2.m;
-      S1.dx = ((S1.dx * S1.m) + (S2.dx * S2.m)) / m;
-      S1.dy = ((S1.dy * S1.m) + (S2.dy * S2.m)) / m;
-      S1.setMass(m);
+    var i, c, i1, i2, S1, S2, m;
+    for(i = 0; i < cs.length; i++) {
+      c = cs[i];
+      console.log('Removing ' + (c.length - 1) + ' stars in collision');
+      console.log(c);
+      console.log(stars.length);
+      while(c.length > 1) {
+        i1 = c[c.length - 2];
+        i2 = c[c.length - 1];
+        S1 = stars[i1];
+        S2 = stars[i2];
+        m = S1.m + S2.m;
+        S1.dx = ((S1.dx * S1.m) + (S2.dx * S2.m)) / m;
+        S1.dy = ((S1.dy * S1.m) + (S2.dy * S2.m)) / m;
+        S1.setMass(m);
 
-      if(_this.unselect(S2)) {
-        _this.select(S1);
+        if(_this.unselect(S2)) {
+          _this.select(S1);
+        }
+
+        stars.splice(i2, 1);
+        c.pop();
       }
-      
-      stars.splice(cs[i+1], 1);
+      console.log(stars.length);
     }
   }
     
@@ -98,27 +106,46 @@ module.exports = function(G0) {
     var i, j, S1, S2, collisions, inCollision;
     
     collisions = [];
+
+    var addCollision = function(S1, S2) {
+
+      // Check to see if either are already involved in a collision.
+      // Not having this caused some issues when multiple stars would
+      // collide in the same event - menory getting deleted out from
+      // under itself, you understand.  This looks bad at O(n^2) but
+      // realistically it would be a very unusual situation for there
+      // to be particularly many collisions at the same time.
+      for(var i = 0; i < collisions.length; i++) {
+        for(var j = 0; j < collisions[i].length; j++) {
+          if(collisions[i][j] == S1) {
+            collisions[i].push(S2);
+            return;
+          } else if(collisions[i][j] == S2) {
+            collisions[i].push(S1);
+            return;
+          }
+        }
+      }
+
+      // Neither are already colliding with anything
+      collisions.push([S1,S2]);
+    };
     
     for (i = 0; i < this.stars.length; i++) {
       S1 = this.stars[i];
-      inCollision = false;
       
       for (j = i+1; j < this.stars.length; j++) {
         S2 = this.stars[j];
         
         // Gravity calculation also detects collisions for now
         if(calcGravityAndCollide(this.G, S1, S2)) {
-          inCollision = true;
-          collisions.push(i);
-          collisions.push(j);
+          addCollision(i, j);
         }
       }
-      
-      if(!inCollision) {
-        // Apply Momentum Changes
-        S1.x += S1.dx * dt;
-        S1.y += S1.dy * dt;
-      }
+
+      // Apply Momentum
+      S1.x += S1.dx * dt;
+      S1.y += S1.dy * dt;
     }
     
     mergeStars(this.stars, collisions);
