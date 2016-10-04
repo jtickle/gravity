@@ -24,7 +24,8 @@
 
 module.exports = function(sq, rq) {
   var _this = this;
-  var active = false;
+  this.active = 'SelectOne';
+  this.options = {};
 
   this.kbd = {
     mod: {
@@ -51,6 +52,16 @@ module.exports = function(sq, rq) {
     pinch: null,
     average: null
   };
+
+  this.changeOptions = function(options) {
+    this.options = options;
+    // TODO: Notify the tool of changes
+  }
+
+  this.changeActive = function(active) {
+    this.active = active;
+    // TODO: Cancel any ongoing action
+  }
 
   var updateKeyboardData = function(e) {
     var k = _this.kbd.mod;

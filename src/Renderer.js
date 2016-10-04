@@ -119,7 +119,7 @@ module.exports = function(bgColor, canvasId, debug) {
   var drawStar = function(star, r) {
     if(typeof(r) == 'undefined') r = star.r;
     ctx.beginPath();
-    ctx.arc(XToScreen(star.x), YToScreen(star.y), r, 0, 2*Math.PI);
+    ctx.arc(XToScreen(star.x), YToScreen(star.y), r / scale, 0, 2*Math.PI);
     ctx.closePath();
   }
   

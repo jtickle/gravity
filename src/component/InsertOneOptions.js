@@ -23,27 +23,11 @@
 "use strict";
 
 var React = require('react');
-var ReactDOM = require('react-dom');
-var StarProps = require('component/StarProps');
-var InputDebug = require('component/InputDebug');
-var SinglePointTools = require('component/SinglePointTools');
 
-module.exports = function(sideid, simulation, renderer, input) {
-  this.render = function() {
-    var csx = renderer.lastX;
-    var csy = renderer.lastY;
-    var cwx = renderer.screenToX(csx);
-    var cwy = renderer.screenToY(csy);
-
-    ReactDOM.render(
-      (<div>
-        <SinglePointTools active={input.active} 
-                          options={input.options}
-                          onChangeOptions={input.changeOptions}
-                          onChangeActive={input.changeActive} />
-        <StarProps selected={simulation.selected} />
-        <InputDebug input={input} />
-      </div>),
-      document.getElementById(sideid));
-  };
+class InsertOneOptions extends React.Component {
+  render() {
+    return (<p>Insert One</p>);
+  }
 }
+
+module.exports = InsertOneOptions;

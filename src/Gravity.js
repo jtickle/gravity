@@ -63,6 +63,16 @@ var run = function() {
     }
   };
 
+  var renderStats = {
+    fps:    0,
+    dt_f:   0,
+    dt_g:   0,
+    dt_s:   0,
+    dt_o:   0,
+    dt_u:   0,
+    dt_t:   0
+  };
+
   var timers = [];
 
   var time = {
@@ -81,7 +91,7 @@ var run = function() {
   }
 
   var justshowstat = function(id, n) {
-    document.getElementById(id).textContent = n;
+    renderStats[id] = n;
   }
 
   var showstat = function(id, n, count) {
@@ -146,13 +156,13 @@ var run = function() {
     var sec = Math.floor(ct/1000);
     if(sec != stats.cursec) {
       // Display Stats once a second
-      justshowstat('stats-fps', stats.count);
-      showstat('stats-dt-f', stats.dt.f, stats.count);
-      showstat('stats-dt-g', stats.dt.g, stats.count);
-      showstat('stats-dt-s', stats.dt.s, stats.count);
-      showstat('stats-dt-o', stats.dt.o, stats.count);
-      showstat('stats-dt-u', stats.dt.u, stats.count);
-      showstat('stats-dt-t', stats.dt.t, stats.count);
+      justshowstat('fps', stats.count);
+      showstat('dt_f', stats.dt.f, stats.count);
+      showstat('dt_g', stats.dt.g, stats.count);
+      showstat('dt_s', stats.dt.s, stats.count);
+      showstat('dt_o', stats.dt.o, stats.count);
+      showstat('dt_u', stats.dt.u, stats.count);
+      showstat('dt_t', stats.dt.t, stats.count);
       stats.cursec = sec;
       stats.count = 0;
       stats.dt.f = 0;

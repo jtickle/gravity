@@ -26,9 +26,9 @@ var React = require('react');
 
 class InputDebug extends React.Component {
   render() {
-    var k = this.props.keyboard;
-    var m = this.props.mouse;
-    var t = this.props.touch;
+    var k = this.props.input.keyboard;
+    var m = this.props.input.mouse;
+    var t = this.props.input.touch;
 
     var avg = null;
     if(t.average) { avg = (
@@ -88,15 +88,15 @@ class InputDebug extends React.Component {
         <tbody>
           <tr>
             <td>Shift</td>
-            <td>{pb(k.mod.shift)}</td>
+            <td></td>
           </tr>
           <tr>
             <td>Alt</td>
-            <td>{pb(k.mod.alt)}</td>
+            <td></td>
           </tr>
           <tr>
             <td>Ctrl</td>
-            <td>{pb(k.mod.ctrl)}</td>
+            <td></td>
           </tr>
         </tbody>
         <thead>
