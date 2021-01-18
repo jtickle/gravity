@@ -1,0 +1,147 @@
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: sans-serif;
+  color: #00FF00;
+}
+
+p.copyleft {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  margin: 0.5em;
+}
+
+p.copyleft, p.copyleft a {
+  font-size: 8pt;
+  color: #669;
+}
+
+#stats {
+  position: absolute;
+  width: 75px;
+  top: 0;
+  right: 0;
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+  font-size: 8pt;
+  color: #0F0;
+}
+
+#stats p {
+  margin: 0.25em;
+  padding: 0.25em;
+  border-bottom: solid 1px #060;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*#mainmenu {
+  top: 0;
+}
+
+#submenu {
+  top: 3em;
+}
+
+.menu {
+  left: 0;
+  position: absolute;
+  height: 3em;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  border-bottom: 1px solid #00FF00;
+  z-index: 999;
+}*/
+
+#side {
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-right: 1px solid #00FF00;
+  z-index: 999;
+}
+
+#side table, #side tr, #side td {
+  border: solid 1px #003300;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  border-collapse: collapse;
+}
+
+#viewport td {
+  max-width: 40px;
+  min-width: 40px;
+  overflow: hidden;
+}
+
+#star-props td {
+  max-width: 24px;
+  overflow: hidden;
+}
+
+table#debug {
+  width: 190px;
+}
+
+#debug td {
+  min-width: 97px;
+  max-width: 97px;
+  overflow: hidden;
+}
+
+#debug th {
+  min-width: 80px;
+  max-width: 80px;
+  overflow: hidden;
+  text-align: right;
+  padding-right: 1em;
+}
+
+.sidebar {
+  position: absolute;
+  width: 200px;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+/*.menu ul {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.menu li {
+  line-height: 3em;
+  display: block;
+  float: left;
+}
+
+.menu li a {
+  margin: 0;
+  padding: 1em;
+  text-decoration: none;
+  font-size: 1em;
+}
+
+.menu li a:hover {
+  background: rgba(0, 128, 0, 0.5);
+}
+
+.menu li a.active {
+  background: rgba(0, 255, 0, 1);
+  color: #000000;
+}*/
+

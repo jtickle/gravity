@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Gravity</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body oncontextmenu="return false;">
+    <canvas id="gravity"></canvas>
+    <!--<div id="simctl" class="simctl">
+      <div class="simctl-block">
+        <p>
+          <button id="simctl-minus10">&lt;&lt;</button>
+          <button id="simctl-minus1">&lt;</button>
+          <button id="simctl-pause">||</button>
+          <button id="simctl-plus1">&gt;</button>
+          <button id="simctl-plus10">&gt;&gt;</button>
+        </p>
+        <p>
+          <button id="simctl-rev2">-2</button>
+          <button id="simctl-rev1">-1</button>
+          <button id="simctl-revhalf">-0.5</button>
+          <button id="simctl-fwdhalf">+0.5</button>
+          <button id="simctl-fwd1">+1</button>
+          <button id="simctl-fwd2">+2</button>
+        </p>
+    </div>-->
+    <div id="side" class="sidebar">
+    </div>
+    <div id="stats">
+      <p>
+        <abbr title="Frames Per Second">FPS</abbr>:
+        <span id="stats-fps">123</span>
+      </p>
+      <p>
+        <abbr title="delta-T since beginning of last frame">dT-F</abbr>:
+        <span id="stats-dt-f"></span>
+      </p>
+      <p>
+        <abbr title="delta-T for simulation.applyGravity()">dT-G</abbr>:
+        <span id="stats-dt-g"></span>
+      <p>
+        <abbr title="delta-T for renderer.drawStars()">dT-S</abbr>:
+        <span id="stats-dt-s"></span>
+      </p>
+      <p>
+        <abbr title="delta-T for renderer.drawOverlay()">dT-O</abbr>:
+        <span id="stats-dt-o"></span>
+      </p>
+      <p>
+        <abbr title="delta-T for ui.render()">dT-U</abbr>:
+        <span id="stats-dt-u"></span>
+      </p>
+      <p>
+        <abbr title="delta-T for entire frame computation">dT-R</abbr>:
+        <span id="stats-dt-t"></span>
+      </p>
+    </div>
+    <p class="copyleft">
+      <strong>Gravity 0.1.3</strong> &copy; 2016 Jeffrey W. Tickle
+      [<a href="http://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a>]
+      [<a href="https://github.com/jtickle/gravity" target="_blank">Source</a>]
+    </p>
+
+    <script src="main.js"></script>
+  </body>
+</html>
