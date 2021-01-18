@@ -22,7 +22,7 @@
  */
 "use strict";
 
-var Star = require('object/Star');
+var Star = require('./object/Star');
 
 var starid = 0;
 
@@ -66,7 +66,7 @@ module.exports = function(G0) {
     // now.  Something to try later:
     // http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
     
-    return r2 <= Math.floor(S1.r*S1.r + S2.r*S2.r);
+    return r2 <= Math.floor((S1.r + S2.r) * (S1.r + S2.r));
   }
   
   // All of this collision code makes the wild assumption that no more

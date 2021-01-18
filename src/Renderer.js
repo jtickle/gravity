@@ -138,7 +138,14 @@ module.exports = function(bgColor, canvasId, debug) {
         c.fillStyle = '#FFFF66';
         c.fill();
       } else {
-        c.fillStyle = 'rgb(' + Math.floor(255 * r) + ',' +
+        if(r > 0.5) {
+          r2 = 1
+        } else if(r < 0.25) {
+          r2 = 0.5
+        } else {
+          r2 = 2*r
+        }
+        c.fillStyle = 'rgb(' + Math.floor(255 * r2) + ',' +
                                Math.floor(255 * r) + ',' +
                                Math.floor(96 * r) + ')';
         c.fillRect(1, 1, 1, 1);

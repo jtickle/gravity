@@ -35,5 +35,5 @@ module.exports = function(x, y, dx, dy, mass) {
 
 module.exports.prototype.setMass = function(mass) {
   this.m = mass;
-  this.r = Math.log10(mass);
+  this.r = Math.ln(mass);
 };

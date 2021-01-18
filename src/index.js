@@ -22,13 +22,11 @@
  */
 "use strict";
 
-import Renderer from 'Renderer';
-import Simulation from 'Simulation';
-import UI from 'UI';
-import ActionQueue from 'ActionQueue';
-import Input from 'Input';
-
-import { createStore } from 'redux';
+import Renderer from './Renderer';
+import Simulation from './Simulation';
+//import UI from 'UI';
+import ActionQueue from './ActionQueue';
+import Input from './Input';
 
 var run = function() {
   // The Simulation
@@ -44,7 +42,7 @@ var run = function() {
   input.activate(renderer.view);
 
   // The UI
-  var ui = new UI('side', simulation, renderer, input);
+  //var ui = new UI('side', simulation, renderer, input);
 
   // Previous frame time, updated per-frame by animate function
   var pt = 0;
@@ -148,7 +146,7 @@ var run = function() {
 
         // Update the React HTML UI
         time.begin();
-        ui.render();
+        //ui.render();
         stats.dt.u += time.end();
 
         // Calculate FPS
@@ -163,7 +161,7 @@ var run = function() {
           showstat('dt_o', stats.dt.o, stats.count);
           showstat('dt_u', stats.dt.u, stats.count);
           showstat('dt_t', stats.dt.t, stats.count);
-          ui.update();
+          //ui.update();
           console.log(renderer.getStarCache());
           stats.cursec = sec;
           stats.count = 0;
